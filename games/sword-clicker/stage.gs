@@ -16,17 +16,33 @@ var HP = "";
 var time_display = "";
 var defeated_display = "";
 var message_text = "";
+var warning_active = 0;
 
-proc update_ui {
+proc update_hp_ui {
     HP = "HP: " & current_hp & " / " & max_hp;
+    broadcast "ui_hp_update";
+}
+
+proc update_time_ui {
     time_display = "のこり時間: " & time_left;
+    broadcast "ui_time_update";
+}
+
+proc update_defeated_ui {
     defeated_display = "たおした数: " & defeated_count & " / " & total_slimes;
-    broadcast_and_wait "ui_update";
+    broadcast "ui_defeated_update";
+}
+
+proc update_dynamic_ui {
+    update_hp_ui;
+    update_time_ui;
+    update_defeated_ui;
 }
 
 proc show_game_ui {
     broadcast "hide_message";
     broadcast "ui_show";
+    broadcast "ui_static_update";
 }
 
 proc hide_game_ui {
@@ -37,7 +53,9 @@ proc set_next_slime {
     max_hp = base_hp + defeated_count * hp_increase_per_slime;
     current_hp = max_hp;
     time_left = time_per_slime;
-    update_ui;
+    warning_active = 0;
+    update_hp_ui;
+    update_time_ui;
     clear_graphic_effects;
     broadcast "spawn_slime";
 }
@@ -46,8 +64,8 @@ proc start_game {
     game_state = "playing";
     hide_game_ui;
     set_next_slime;
+    update_defeated_ui;
     show_game_ui;
-    update_ui;
 }
 
 proc finish_game_over {
@@ -74,6 +92,7 @@ onflag {
     current_hp = 0;
     max_hp = 0;
     time_left = time_per_slime;
+    warning_active = 0;
     HP = "";
     time_display = "";
     defeated_display = "";
@@ -93,14 +112,20 @@ onflag {
             wait 1;
             if game_state == "playing" {
                 time_left--;
-                update_ui;
+                update_time_ui;
 
                 if time_left <= warning_time {
-                    set_color_effect 20;
-                    set_brightness_effect -10;
+                    if warning_active == 0 {
+                        warning_active = 1;
+                        set_color_effect 20;
+                        set_brightness_effect -10;
+                    }
                 }
                 else {
-                    clear_graphic_effects;
+                    if warning_active == 1 {
+                        warning_active = 0;
+                        clear_graphic_effects;
+                    }
                 }
 
                 if time_left <= 0 {
@@ -115,13 +140,13 @@ onflag {
 }
 
 on "update_ui" {
-    update_ui;
+    update_dynamic_ui;
 }
 
 on "slime_defeated" {
     if game_state == "playing" {
         defeated_count++;
-        update_ui;
+        update_defeated_ui;
 
         if defeated_count >= total_slimes {
             finish_game_clear;

@@ -3,6 +3,7 @@ costumes "assets/digit_0.svg", "assets/digit_1.svg", "assets/digit_2.svg", "asse
 hide;
 set_size 70;
 var digit_value = 0;
+var last_digit_value = -1;
 
 proc switch_digit {
     if digit_value == 0 {
@@ -39,6 +40,10 @@ proc switch_digit {
 
 proc update_digit {
     digit_value = current_hp % 10;
+    if digit_value == last_digit_value {
+        stop_this_script;
+    }
+    last_digit_value = digit_value;
     switch_digit;
     goto -130, 148;
     clear_graphic_effects;
@@ -48,6 +53,7 @@ proc update_digit {
 }
 
 onflag {
+    last_digit_value = -1;
     hide;
 }
 
@@ -57,12 +63,13 @@ on "ui_show" {
     }
 }
 
-on "ui_update" {
+on "ui_hp_update" {
     if game_state == "playing" {
         update_digit;
     }
 }
 
 on "ui_hide" {
+    last_digit_value = -1;
     hide;
 }

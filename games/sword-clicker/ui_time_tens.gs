@@ -3,6 +3,8 @@ costumes "assets/digit_0.svg", "assets/digit_1.svg", "assets/digit_2.svg", "asse
 hide;
 set_size 70;
 var digit_value = 0;
+var last_digit_value = -1;
+var last_warning_value = -1;
 
 proc switch_digit {
     if digit_value == 0 {
@@ -39,26 +41,41 @@ proc switch_digit {
 
 proc update_digit {
     if time_left < 10 {
-        hide;
+        if last_digit_value != -1 {
+            last_digit_value = -1;
+            hide;
+        }
         stop_this_script;
     }
     digit_value = floor (time_left / 10);
+    if digit_value == last_digit_value {
+        stop_this_script;
+    }
+    last_digit_value = digit_value;
     switch_digit;
     goto 175, 148;
     if time_left <= warning_time {
-        set_color_effect 20;
-        set_brightness_effect 35;
-        set_size 85;
+        if last_warning_value != 1 {
+            last_warning_value = 1;
+            set_color_effect 20;
+            set_brightness_effect 35;
+            set_size 85;
+        }
     }
     else {
-        clear_graphic_effects;
-        set_size 70;
+        if last_warning_value != 0 {
+            last_warning_value = 0;
+            clear_graphic_effects;
+            set_size 70;
+        }
     }
     show;
     goto_front;
 }
 
 onflag {
+    last_digit_value = -1;
+    last_warning_value = -1;
     hide;
 }
 
@@ -68,12 +85,14 @@ on "ui_show" {
     }
 }
 
-on "ui_update" {
+on "ui_time_update" {
     if game_state == "playing" {
         update_digit;
     }
 }
 
 on "ui_hide" {
+    last_digit_value = -1;
+    last_warning_value = -1;
     hide;
 }
