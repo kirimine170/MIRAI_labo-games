@@ -1,0 +1,6 @@
+<svg version="1.1" width="440" height="170" viewBox="0 0 440 170" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="8" width="424" height="154" rx="8" fill="#fff4f4" stroke="#d62828" stroke-width="6"/>
+  <text x="220" y="48" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="700" fill="#982020">ざんねん！</text>
+  <text x="220" y="84" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="700" fill="#982020">時間内にスライムをたおせなかった！</text>
+  <text x="220" y="120" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#982020">緑のはたをおして、もう一度やってみよう！</text>
+</svg>

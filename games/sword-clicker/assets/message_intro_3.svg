@@ -1,0 +1,6 @@
+<svg version="1.1" width="440" height="170" viewBox="0 0 440 170" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="8" width="424" height="154" rx="8" fill="#ffffff" stroke="#26547c" stroke-width="6"/>
+  <text x="220" y="50" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="700" fill="#1f3a4d">スライムをクリックしてたおそう！</text>
+  <text x="220" y="92" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" fill="#1f3a4d">ぜんぶで3体のスライムを</text>
+  <text x="220" y="130" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" fill="#1f3a4d">時間内にたおせたら、ゲームクリア！</text>
+</svg>
