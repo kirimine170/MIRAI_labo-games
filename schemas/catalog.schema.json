@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/kirimine170/MIRAI_labo-games/main/schemas/catalog.schema.json",
+  "title": "HackSick Academy catalog index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "schemas", "games", "defects", "log_examples"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "schemas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["game", "defect", "session_log"],
+      "properties": {
+        "game": {"$ref": "#/$defs/path"},
+        "defect": {"$ref": "#/$defs/path"},
+        "session_log": {"$ref": "#/$defs/path"}
+      }
+    },
+    "games": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/path"}
+    },
+    "defects": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/path"}
+    },
+    "log_examples": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/path"}
+    }
+  },
+  "$defs": {
+    "path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.\\-/]+\\.json$"
+    }
+  }
+}

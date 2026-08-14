@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "defect_id": "00_00-D01",
+  "game_id": "00_00",
+  "title": "HP\u304c0\u3067\u8a0e\u4f10\u306b\u306a\u3089\u306a\u3044",
+  "lifecycle": "planned",
+  "target_learners": {
+    "grades": ["\u5c0f4", "\u5c0f5", "\u5c0f6"],
+    "support": "facilitated",
+    "estimated_minutes": 35
+  },
+  "learning": {
+    "primary_concept": {"id": "boundary-condition", "label": "\u5883\u754c\u6761\u4ef6"},
+    "secondary_concepts": [
+      {"id": "state-transition", "label": "\u72b6\u614b\u9077\u79fb"},
+      {"id": "event-tracing", "label": "\u30a4\u30d9\u30f3\u30c8\u8ffd\u8de1"}
+    ],
+    "objective": "HP\u304c1\u304b\u30890\u306b\u306a\u308b\u64cd\u4f5c\u3092\u518d\u73fe\u3057\uff0c\u7b49\u53f7\u3092\u542b\u3080\u6761\u4ef6\u306e\u5fc5\u8981\u6027\u3092\u8aac\u660e\u3059\u308b\uff0e"
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "source_path": "games/sword-clicker",
+      "behavior": "current_hp\u304c0\u4ee5\u4e0b\u306b\u306a\u3063\u305f\u30af\u30ea\u30c3\u30af\u3067slime_defeated\u3092\u9001\u4fe1\u3059\u308b\uff0e"
+    },
+    "defective": {
+      "version_label": "defect-hp-zero-stall",
+      "delivery": "planned_patch",
+      "base_version": "1.0.0",
+      "patch_targets": ["games/sword-clicker/main.gs"]
+    }
+  },
+  "fault": {
+    "category": "boundary-condition",
+    "symptom": "HP\u8868\u793a\u304c0\u306b\u306a\u3063\u3066\u3082\u8a0e\u4f10\u6570\u304c\u5897\u3048\u305a\uff0c\u305d\u308c\u4ee5\u4e0a\u30af\u30ea\u30c3\u30af\u3057\u3066\u3082\u9032\u307e\u306a\u3044\uff0e",
+    "expected_behavior": "HP\u304c0\u306b\u306a\u3063\u305f\u76f4\u5f8c\u306b\u8a0e\u4f10\u6570\u304c1\u5897\u3048\uff0c\u6b21\u306e\u30b9\u30e9\u30a4\u30e0\u3078\u9032\u3080\uff0e",
+    "root_cause": "\u8a0e\u4f10\u5224\u5b9a\u304ccurrent_hp < 0\u3068\u306a\u3063\u3066\u304a\u308a\uff0ccurrent_hp > 0\u306e\u3068\u304d\u3057\u304b\u6e1b\u7b97\u3057\u306a\u3044\u51e6\u7406\u3068\u7d44\u307f\u5408\u308f\u3055\u3063\u3066-1\u306b\u5230\u9054\u3067\u304d\u306a\u3044\uff0e",
+    "trigger": "current_hp\u304c1\u306e\u30b9\u30e9\u30a4\u30e0\u30921\u56de\u30af\u30ea\u30c3\u30af\u3059\u308b\uff0e"
+  },
+  "reproduction": {
+    "preconditions": [
+      "base_hp\u306f5\uff0chp_increase_per_slime\u306f1\u306e\u521d\u671f\u8a2d\u5b9a\u306b\u3059\u308b\uff0e",
+      "\u7dd1\u306e\u65d7\u304b\u3089\u30b2\u30fc\u30e0\u3092\u958b\u59cb\u3057\uff0cplaying\u306b\u306a\u308b\u307e\u3067\u5f85\u3064\uff0e"
+    ],
+    "steps": [
+      {"step": 1, "action": "1\u4f53\u76ee\u306e\u30b9\u30e9\u30a4\u30e0\u30924\u56de\u30af\u30ea\u30c3\u30af\u3059\u308b\uff0e", "expected_observation": "HP\u306f1\uff0c\u8a0e\u4f10\u6570\u306f0\u306e\u307e\u307e\u3067\u3042\u308b\uff0e"},
+      {"step": 2, "action": "\u540c\u3058\u30b9\u30e9\u30a4\u30e0\u3092\u3082\u30461\u56de\u30af\u30ea\u30c3\u30af\u3059\u308b\uff0e", "expected_observation": "HP\u306f0\u3060\u304c\u8a0e\u4f10\u6570\u306f0\u306e\u307e\u307e\u3067\uff0c2\u4f53\u76ee\u304c\u51fa\u73fe\u3057\u306a\u3044\uff0e"},
+      {"step": 3, "action": "\u3055\u3089\u306b1\u56de\u30af\u30ea\u30c3\u30af\u3059\u308b\uff0e", "expected_observation": "HP\u3082\u8a0e\u4f10\u6570\u3082\u5909\u308f\u3089\u305a\uff0c\u9032\u884c\u4e0d\u80fd\u3067\u3042\u308b\uff0e"}
+    ]
+  },
+  "repair": {
+    "minimal_fix": {
+      "description": "\u8a0e\u4f10\u5224\u5b9a\u3092current_hp < 0\u304b\u3089current_hp <= 0\u3078\u623b\u3059\uff0e",
+      "edit_targets": [
+        {"path": "games/sword-clicker/main.gs", "anchor": "if current_hp <= 0"}
+      ],
+      "constraints": [
+        "HP\u304c1\u4ee5\u4e0a\u306e\u9593\u306f\u8a0e\u4f10\u6271\u3044\u306b\u3057\u306a\u3044\uff0e",
+        "1\u4f53\u306b\u3064\u304dslime_defeated\u30921\u56de\u3060\u3051\u9001\u4fe1\u3059\u308b\uff0e"
+      ]
+    },
+    "acceptable_alternatives": [
+      {
+        "description": "\u6e1b\u7b97\u5f8c\u306bcurrent_hp == 0\u3092\u5224\u5b9a\u3059\u308b\uff0e",
+        "acceptance_criteria": [
+          "HP0\u3067\u5fc5\u305aslime_defeated\u3092\u9001\u4fe1\u3059\u308b\uff0e",
+          "\u9023\u6253\u3067\u9001\u4fe1\u304c\u91cd\u8907\u3057\u306a\u3044\uff0e",
+          "\u6b63\u5e38\u7cfb\u3068\u5236\u9650\u6642\u9593\u5207\u308c\u306e\u30c6\u30b9\u30c8\u304c\u901a\u308b\uff0e"
+        ]
+      }
+    ],
+    "rejected_shortcuts": [
+      "base_hp\u30920\u306b\u5909\u3048\u308b\uff0e",
+      "total_slimes\u30920\u307e\u305f\u306f1\u306b\u5909\u3048\u3066\u75c7\u72b6\u3092\u898b\u3048\u306a\u304f\u3059\u308b\uff0e",
+      "\u7121\u6761\u4ef6\u3067slime_defeated\u3092\u9001\u4fe1\u3059\u308b\uff0e"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_00-D01-T01",
+      "kind": "symptom",
+      "setup": "1\u4f53\u76ee\u3092HP5\u3067\u958b\u59cb\u3059\u308b\uff0e",
+      "actions": ["\u30b9\u30e9\u30a4\u30e0\u30925\u56de\u30af\u30ea\u30c3\u30af\u3059\u308b\uff0e"],
+      "expected_complete": "defeated_count\u306f1\uff0ccurrent_hp\u306f2\u4f53\u76ee\u306e6\u306b\u306a\u308b\uff0e",
+      "expected_defective": "defeated_count\u306f0\uff0ccurrent_hp\u306f0\u306e\u307e\u307e\u306b\u306a\u308b\uff0e",
+      "automatable": true
+    },
+    {
+      "test_id": "00_00-D01-T02",
+      "kind": "regression",
+      "setup": "1\u4f53\u76ee\u3092HP5\u3067\u958b\u59cb\u3059\u308b\uff0e",
+      "actions": ["\u30b9\u30e9\u30a4\u30e0\u30924\u56de\u30af\u30ea\u30c3\u30af\u3059\u308b\uff0e"],
+      "expected_complete": "current_hp\u306f1\uff0cdefeated_count\u306f0\u3067playing\u3092\u7d9a\u3051\u308b\uff0e",
+      "expected_defective": "current_hp\u306f1\uff0cdefeated_count\u306f0\u3067playing\u3092\u7d9a\u3051\u308b\uff0e",
+      "automatable": true
+    }
+  ],
+  "hints": [
+    {"level": 1, "focus": "observation", "prompt": "\u4f55\u56de\u76ee\u306e\u30af\u30ea\u30c3\u30af\u3067\uff0c\u671f\u5f85\u3057\u305f\u52d5\u304d\u3068\u9055\u3046\u52d5\u304d\u306b\u306a\u308a\u307e\u3059\u304b\uff0e"},
+    {"level": 2, "focus": "reproduction", "prompt": "HP\u30921\u307e\u3067\u6e1b\u3089\u3057\u3066\u304b\u3089\uff0c\u6b21\u306e1\u56de\u3060\u3051\u3092\u3088\u304f\u89b3\u5bdf\u3057\u307e\u3057\u3087\u3046\uff0e"},
+    {"level": 3, "focus": "variable", "prompt": "\u30af\u30ea\u30c3\u30af\u306e\u524d\u5f8c\u3067current_hp\u306f\u3044\u304f\u3064\u304b\u3089\u3044\u304f\u3064\u306b\u5909\u308f\u308a\u307e\u3059\u304b\uff0e"},
+    {"level": 4, "focus": "control-flow", "prompt": "slime_defeated\u304c\u9001\u3089\u308c\u308b\u6761\u4ef6\u306b\uff0c0\u306f\u542b\u307e\u308c\u3066\u3044\u307e\u3059\u304b\uff0e"}
+  ]
+}
