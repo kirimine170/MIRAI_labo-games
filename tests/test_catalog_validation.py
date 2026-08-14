@@ -91,6 +91,21 @@ class CatalogValidationTests(unittest.TestCase):
                 self.logs,
             )
 
+    def test_repair_anchor_must_exist_in_source(self) -> None:
+        malformed_defects = copy.deepcopy(self.defects)
+        malformed_defects[0]["repair"]["minimal_fix"]["edit_targets"][0]["anchor"] = (
+            "this anchor does not exist"
+        )
+
+        with self.assertRaisesRegex(CatalogValidationError, "repair anchor"):
+            validate_relationships(
+                REPOSITORY_ROOT,
+                self.index,
+                self.games,
+                malformed_defects,
+                self.logs,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

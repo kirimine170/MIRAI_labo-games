@@ -338,6 +338,18 @@ def validate_relationships(
                     f"defect {defect_id}: patch target does not exist: {patch_target}"
                 )
 
+        for edit_target in defect["repair"]["minimal_fix"]["edit_targets"]:
+            edit_path = _resolve_repository_path(root, edit_target["path"])
+            if not edit_path.is_file():
+                raise CatalogValidationError(
+                    f"defect {defect_id}: edit target does not exist: {edit_target['path']}"
+                )
+            if edit_target["anchor"] not in edit_path.read_text(encoding="utf-8"):
+                raise CatalogValidationError(
+                    f"defect {defect_id}: repair anchor is not present in "
+                    f"{edit_target['path']}: {edit_target['anchor']}"
+                )
+
         steps = defect["reproduction"]["steps"]
         if [step["step"] for step in steps] != list(range(1, len(steps) + 1)):
             raise CatalogValidationError(

@@ -54,7 +54,7 @@
     "minimal_fix": {
       "description": "add_pull_progressでpull_countと回数UIを更新した直後にfish_progress_updateを1回送信する．",
       "edit_targets": [
-        {"path": "games/00_06_click_nature/stage.gs", "anchor": "broadcast fish_progress_update"}
+        {"path": "games/00_06_click_nature/stage.gs", "anchor": "broadcast \"fish_progress_update\";"}
       ],
       "constraints": [
         "pull_countを更新した後に魚へ通知する．",

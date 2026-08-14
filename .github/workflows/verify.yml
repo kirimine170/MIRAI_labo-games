@@ -24,6 +24,10 @@ jobs:
           persist-credentials: false
       - name: Check tracked sources and project metadata
         run: ./scripts/check-repository.sh
+      - name: Validate catalog manifests
+        run: PYTHONDONTWRITEBYTECODE=1 python3 tools/validate_catalog.py
+      - name: Run catalog unit tests
+        run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
 
   build:
     name: Compile Scratch projects

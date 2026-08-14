@@ -52,7 +52,7 @@
     "minimal_fix": {
       "description": "add_repair_progress\u3067\u4fee\u7406\u7387\u3068UI\u3092\u66f4\u65b0\u3057\u305f\u5f8c\u306brobot_progress_update\u3092\u9001\u4fe1\u3059\u308b\uff0e",
       "edit_targets": [
-        {"path": "games/robot-repair-clicker/stage.gs", "anchor": "broadcast robot_progress_update"}
+        {"path": "games/robot-repair-clicker/stage.gs", "anchor": "broadcast \"robot_progress_update\";"}
       ],
       "constraints": [
         "repair_percent\u306e\u8a08\u7b97\u5f8c\u306b\u8868\u793a\u3092\u66f4\u65b0\u3059\u308b\uff0e",

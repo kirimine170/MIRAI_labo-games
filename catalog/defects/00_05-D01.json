@@ -52,7 +52,7 @@
     "minimal_fix": {
       "description": "finish_game_overの最初でgame_stateをgame_overへ設定し，終端状態を保存する．",
       "edit_targets": [
-        {"path": "games/00_05_click_cooking/stage.gs", "anchor": "game_state = game_over"}
+        {"path": "games/00_05_click_cooking/stage.gs", "anchor": "game_state = \"game_over\";"}
       ],
       "constraints": [
         "時間切れ表示より先にgame_stateを更新する．",
