@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "defect_id": "00_09-D01",
+  "game_id": "00_09",
+  "title": "ビートが増えてもステージ演出が変わらない",
+  "lifecycle": "implemented",
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "estimated_minutes": 35
+  },
+  "learning": {
+    "primary_concept": {"id": "feedback-sync", "label": "表示の同期"},
+    "secondary_concepts": [
+      {"id": "message-passing", "label": "メッセージパッシング"},
+      {"id": "state-management", "label": "状態管理"}
+    ],
+    "objective": "演奏回数と見た目の不一致を再現し，進捗計算後の通知が段階演出の更新に必要な理由を説明する．"
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "source_path": "games/00_09_click_music",
+      "behavior": "beat_percentを更新した後にperformance_progress_updateを送信し，25％ごとにドラムの演出を更新する．"
+    },
+    "defective": {
+      "version_label": "defect-stale-performance-visual",
+      "delivery": "patch",
+      "base_version": "1.0.0",
+      "patch_targets": ["games/00_09_click_music/stage.gs"]
+    }
+  },
+  "fault": {
+    "category": "feedback-sync",
+    "symptom": "演奏回数は増え，クリック時の一瞬の反応も出るが，ドラムとステージの段階演出は最初の見た目のままになる．",
+    "expected_behavior": "beat_percentが25％，50％，75％，100％の境界へ到達するたびに，ドラムの演出が段階的に変わる．",
+    "root_cause": "add_drum_hitからperformance_progress_updateの送信が抜け，mainスプライトのupdate_performance_costumeが途中経過で呼ばれない．",
+    "trigger": "beat_percentが23％から26％になる8回目のクリックを行う．"
+  },
+  "reproduction": {
+    "preconditions": [
+      "hit_targetは30，hit_per_clickは1，time_limitは20の初期設定にする．",
+      "games/00_09_click_music/defects/00_09-D01.patchを完成版へ適用する．"
+    ],
+    "steps": [
+      {"step": 1, "action": "ゲーム開始後，ドラムを7回クリックする．", "expected_observation": "回数は7，beat_percentは23で，ドラムは0％段階の見た目である．"},
+      {"step": 2, "action": "ドラムをもう1回クリックする．", "expected_observation": "回数は8，beat_percentは26だが，ドラムは25％段階へ変わらず0％段階のままである．"},
+      {"step": 3, "action": "15回まで追加でクリックする．", "expected_observation": "回数とbeat_percentは増えるが，50％段階の見た目にも変わらない．"}
+    ]
+  },
+  "repair": {
+    "minimal_fix": {
+      "description": "add_drum_hitでbeat_percentと回数UIを更新した後に，performance_progress_updateを送信する．",
+      "edit_targets": [
+        {"path": "games/00_09_click_music/stage.gs", "anchor": "broadcast performance_progress_update"}
+      ],
+      "constraints": [
+        "beat_percentの計算後に演出更新を通知する．",
+        "1クリックにつき進捗通知を1回だけ送る．",
+        "成功・時間切れ・再挑戦の状態遷移は変更しない．"
+      ]
+    },
+    "acceptable_alternatives": [
+      {
+        "description": "更新済みのbeat_percentを受け取れる別のイベントから，update_performance_costumeを1回呼ぶ．",
+        "acceptance_criteria": [
+          "8，15，23，30回目の操作後に対応する段階演出へ変わる．",
+          "回数表示と見た目が同じクリックの結果として一致する．",
+          "クリアとゲームオーバー，再挑戦を壊さない．"
+        ]
+      }
+    ],
+    "rejected_shortcuts": [
+      "drum_0.svgを100％段階の見た目へ差し替える．",
+      "hit_targetを1へ変えて途中段階を発生させない．",
+      "回数表示を隠して不一致を見えなくする．"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_09-D01-T01",
+      "kind": "symptom",
+      "setup": "hit_targetを30，hit_per_clickを1にする．",
+      "actions": ["ドラムを8回クリックする．"],
+      "expected_complete": "hit_doneは8，beat_percentは26，コスチュームはdrum_25になる．",
+      "expected_defective": "hit_doneは8，beat_percentは26だが，コスチュームはdrum_0のままになる．",
+      "automatable": false
+    },
+    {
+      "test_id": "00_09-D01-T02",
+      "kind": "regression",
+      "setup": "hit_targetを30，hit_per_clickを1にする．",
+      "actions": ["ドラムを7回クリックする．"],
+      "expected_complete": "hit_doneは7，beat_percentは23，コスチュームはdrum_0になる．",
+      "expected_defective": "hit_doneは7，beat_percentは23，コスチュームはdrum_0になる．",
+      "automatable": false
+    },
+    {
+      "test_id": "00_09-D01-T03",
+      "kind": "boundary",
+      "setup": "時間内に操作できる状態にする．",
+      "actions": ["ドラムを30回クリックする．"],
+      "expected_complete": "hit_doneは30，コスチュームはdrum_100，game_stateはclearになる．",
+      "expected_defective": "hit_doneは30，コスチュームはdrum_100，game_stateはclearになる．",
+      "automatable": false
+    }
+  ],
+  "hints": [
+    {"level": 1, "focus": "observation", "prompt": "回数表示とドラムの見た目は，何回目から合わなくなりますか．"},
+    {"level": 2, "focus": "reproduction", "prompt": "7回たたいた後，次の1回だけで回数と見た目がどう変わるか比べましょう．"},
+    {"level": 3, "focus": "variable", "prompt": "hit_done，beat_percent，performance_stageのうち，正しく更新されていないものはどれですか．"},
+    {"level": 4, "focus": "control-flow", "prompt": "update_performance_costumeは，どのメッセージを受け取ったときに呼ばれますか．"}
+  ]
+}

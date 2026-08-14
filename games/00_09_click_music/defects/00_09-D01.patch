@@ -1,0 +1,8 @@
+diff --git a/games/00_09_click_music/stage.gs b/games/00_09_click_music/stage.gs
+--- a/games/00_09_click_music/stage.gs
++++ b/games/00_09_click_music/stage.gs
+@@ -91,4 +91,3 @@ proc add_drum_hit {
+     update_beat_percent;
+     update_hit_ui;
+-    broadcast "performance_progress_update";
+     if hit_done >= hit_target {
