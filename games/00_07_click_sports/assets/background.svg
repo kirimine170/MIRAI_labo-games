@@ -1,0 +1,22 @@
+<svg version="1.1" width="480" height="360" viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="360" fill="#dbeafe"/>
+  <rect y="0" width="480" height="78" fill="#1e3a8a"/>
+  <path d="M0 78h480" stroke="#facc15" stroke-width="7"/>
+  <g fill="#ffffff" opacity="0.92">
+    <circle cx="42" cy="37" r="12"/><circle cx="82" cy="40" r="12"/><circle cx="124" cy="34" r="12"/>
+    <circle cx="356" cy="36" r="12"/><circle cx="397" cy="42" r="12"/><circle cx="440" cy="35" r="12"/>
+  </g>
+  <rect y="102" width="480" height="258" fill="#dc2626"/>
+  <rect y="119" width="480" height="74" fill="#f97316"/>
+  <rect y="204" width="480" height="70" fill="#ea580c"/>
+  <rect y="285" width="480" height="75" fill="#c2410c"/>
+  <path d="M0 119h480M0 193h480M0 204h480M0 274h480M0 285h480" stroke="#fff7ed" stroke-width="4"/>
+  <path d="M55 101v177" stroke="#ffffff" stroke-width="7"/>
+  <g transform="translate(425 102)">
+    <rect width="10" height="176" fill="#ffffff"/>
+    <path d="M0 0h10v11H0zm0 22h10v11H0zm0 44h10v11H0zm0 44h10v11H0zm0 44h10v11H0z" fill="#111827"/>
+    <path d="M10 11h10v11H10zm0 22h10v11H10zm0 44h10v11H10zm0 44h10v11H10zm0 44h10v11H10z" fill="#111827"/>
+  </g>
+  <text x="55" y="303" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="700" fill="#ffffff">START</text>
+  <text x="425" y="303" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="700" fill="#ffffff">GOAL</text>
+</svg>

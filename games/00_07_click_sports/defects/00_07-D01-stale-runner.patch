@@ -1,0 +1,9 @@
+diff --git a/games/00_07_click_sports/stage.gs b/games/00_07_click_sports/stage.gs
+--- a/games/00_07_click_sports/stage.gs
++++ b/games/00_07_click_sports/stage.gs
+@@ -73,3 +73,3 @@ proc register_dash {
+-            broadcast "runner_progress_update";
+-
++            # D01：The runner sprite is no longer told that runner_x changed．
++
+             if dash_count >= target_dashes {

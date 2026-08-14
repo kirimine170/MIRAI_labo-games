@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "game_id": "00_07",
+  "slug": "click-sports-dash",
+  "title": "ゴールへダッシュ",
+  "lifecycle": "complete",
+  "summary": "20秒以内にダッシュボタンを30回押し，選手をゴールへ進める連打ゲーム．",
+  "source": {
+    "complete_path": "games/00_07_click_sports",
+    "toolchain": "goboscript",
+    "configuration": "games/00_07_click_sports/goboscript.toml",
+    "files": [
+      "stage.gs",
+      "runner.gs",
+      "dash_button.gs",
+      "message_panel.gs",
+      "status_board.gs"
+    ]
+  },
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "assumed_skills": [
+      "画面の数値と選手の位置を対応付けられる",
+      "if文の条件を読める",
+      "メッセージの送信元と受信先を追跡できる"
+    ]
+  },
+  "learning": {
+    "primary_concepts": [
+      {
+        "id": "feedback-sync",
+        "label": "表示の同期",
+        "description": "ダッシュ回数の更新を，選手の位置表示へ同じ入力の結果として反映する．"
+      },
+      {
+        "id": "state-transition",
+        "label": "状態遷移",
+        "description": "intro，playing，clear，game_overの状態と，入力受付の関係を追跡する．"
+      }
+    ],
+    "transfer_family": "click-progress",
+    "learning_goals": [
+      "数値は正しいが表示が間違う症状から，表示更新イベントを追跡する．",
+      "ゲーム内部の状態と画面のフィードバックを分けてテストする．"
+    ]
+  },
+  "gameplay": {
+    "genre": "clicker",
+    "expected_duration_minutes": 2,
+    "states": ["intro", "playing", "clear", "game_over"],
+    "input_actions": ["ダッシュボタンをクリックする", "スペースキーを押す"],
+    "clear_condition": "time_leftが0より大きい間にdash_countがtarget_dashes以上になる．",
+    "failure_condition": "dash_countがtarget_dashes未満のままtime_leftが0以下になる．",
+    "settings": [
+      {"name": "target_dashes", "default": 30, "unit": "回", "meaning": "クリアに必要な入力数"},
+      {"name": "time_limit", "default": 20, "unit": "秒", "meaning": "1プレイの制限時間"},
+      {"name": "warning_time", "default": 5, "unit": "秒", "meaning": "残り時間表示を強調する境界"},
+      {"name": "start_x", "default": -185, "unit": "Scratch x座標", "meaning": "選手のスタート位置"},
+      {"name": "finish_x", "default": 170, "unit": "Scratch x座標", "meaning": "選手のゴール位置"}
+    ]
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "status": "needs_qa",
+      "source_path": "games/00_07_click_sports"
+    },
+    "defect_manifests": ["catalog/defects/00_07-D01.json"]
+  },
+  "tests": [
+    {
+      "test_id": "00_07-C01",
+      "kind": "normal",
+      "scenario": "playing中にダッシュを1回入力する．",
+      "expected": "dash_countが1になり，選手がゴール方向へ約11.8進み，走るポーズが切り替わる．"
+    },
+    {
+      "test_id": "00_07-C02",
+      "kind": "boundary",
+      "scenario": "dash_countが29でtime_leftが1以上のときに，もう1回入力する．",
+      "expected": "dash_countが30，game_stateがclearになり，選手がゴール姿勢でfinish_xへ移動する．"
+    },
+    {
+      "test_id": "00_07-C03",
+      "kind": "state-transition",
+      "scenario": "dash_countが30未満のままtime_leftが0になる．",
+      "expected": "game_stateがgame_overになり，入力ボタンが隠れ，再試行パネルが表示される．"
+    },
+    {
+      "test_id": "00_07-C04",
+      "kind": "regression",
+      "scenario": "clearまたはgame_overのパネルをクリックする．",
+      "expected": "dash_countが0，time_leftが20，runner_xがstart_xに戻り，playingで再開する．"
+    }
+  ]
+}

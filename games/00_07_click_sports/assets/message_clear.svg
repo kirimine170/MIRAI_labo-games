@@ -1,0 +1,7 @@
+<svg version="1.1" width="430" height="180" viewBox="0 0 430 180" xmlns="http://www.w3.org/2000/svg">
+  <rect x="7" y="7" width="416" height="166" rx="18" fill="#fffbeb" stroke="#ca8a04" stroke-width="7"/>
+  <text x="215" y="58" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="900" fill="#b45309">ゴール！</text>
+  <text x="215" y="99" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="800" fill="#713f12">30かいのダッシュ せいこう！</text>
+  <rect x="82" y="125" width="266" height="35" rx="17" fill="#facc15"/>
+  <text x="215" y="149" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#713f12">クリックして もういちど</text>
+</svg>

@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "defect_id": "00_07-D01",
+  "game_id": "00_07",
+  "title": "ダッシュ回数は増えるが選手が進まない",
+  "lifecycle": "implemented",
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "estimated_minutes": 35
+  },
+  "learning": {
+    "primary_concept": {"id": "feedback-sync", "label": "表示の同期"},
+    "secondary_concepts": [
+      {"id": "message-passing", "label": "メッセージパッシング"},
+      {"id": "state-management", "label": "状態管理"}
+    ],
+    "objective": "dash_countとrunner_xが更新されているのに選手が進まない症状から，状態変化を表示に伝えるメッセージの必要性を説明する．"
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "source_path": "games/00_07_click_sports",
+      "behavior": "各入力でdash_countとrunner_xを更新した後，runner_progress_updateを送信して選手を1段階進める．"
+    },
+    "defective": {
+      "version_label": "defect-stale-runner-position",
+      "delivery": "patch",
+      "base_version": "1.0.0",
+      "patch_targets": ["games/00_07_click_sports/stage.gs"]
+    }
+  },
+  "fault": {
+    "category": "feedback-sync",
+    "symptom": "ダッシュ回数と残り時間は更新されるが，選手はスタート位置のままになる．30回達成時だけゴール姿勢に切り替わる．",
+    "expected_behavior": "ダッシュするたびに，数値の増加と同じ入力の結果として選手がゴール方向へ1段階進む．",
+    "root_cause": "register_dashからrunner_progress_updateの送信が抜け，runnerスプライトのupdate_runner_positionが途中経過で呼ばれない．",
+    "trigger": "playing中にdash_countが0から1になる最初の入力を行う．"
+  },
+  "reproduction": {
+    "preconditions": [
+      "完成版1.0.0の作業用コピーにgames/00_07_click_sports/defects/00_07-D01-stale-runner.patchを適用し，固定goboscriptでビルドする．",
+      "target_dashesは30，time_limitは20の初期設定にする．"
+    ],
+    "steps": [
+      {"step": 1, "action": "イントロパネルをクリックして開始する．", "expected_observation": "dash_countは0で，選手はスタート地点にいる．"},
+      {"step": 2, "action": "ダッシュボタンを1回クリックする．", "expected_observation": "dash_countは1になるが，選手はスタート地点のままである．"},
+      {"step": 3, "action": "合計5回になるまで入力する．", "expected_observation": "dash_countとrunner_xは増えるが，選手の画面上の位置は変わらない．"}
+    ]
+  },
+  "repair": {
+    "minimal_fix": {
+      "description": "register_dashでrunner_xとステータスUIを更新した後，runner_progress_updateを1回送信する．",
+      "edit_targets": [
+        {"path": "games/00_07_click_sports/stage.gs", "anchor": "broadcast \"runner_progress_update\";"}
+      ],
+      "constraints": [
+        "runner_xの計算後に表示更新を通知する．",
+        "1入力につきrunner_progress_updateを1回だけ送信する．",
+        "dash_countの増加，制限時間，クリア判定は変更しない．"
+      ]
+    },
+    "acceptable_alternatives": [
+      {
+        "description": "runner_progress_updateと別名の進捗通知を追加し，runnerスプライト側で受信してrunner_xへ移動する．",
+        "acceptance_criteria": [
+          "1回目から29回目まで，入力ごとに選手が前進する．",
+          "dash_countと選手の位置が同じ入力回数を表す．",
+          "30回目のclearとtime_leftが0のgame_overを壊さない．"
+        ]
+      }
+    ],
+    "rejected_shortcuts": [
+      "target_dashesを1にして途中の位置更新を発生させなくする．",
+      "dash_countの表示を隠して不一致を見えなくする．",
+      "スタート時に選手をゴール地点へ置く．"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_07-D01-T01",
+      "kind": "symptom",
+      "setup": "target_dashesを30，time_limitを20にし，playingで開始する．",
+      "actions": ["ダッシュを5回入力する．"],
+      "expected_complete": "dash_countは5，runner_xは約-125.8で，選手も画面上のその位置へ移動する．",
+      "expected_defective": "dash_countは5，runner_xは約-125.8だが，選手は画面上でstart_xの-185に残る．",
+      "automatable": true
+    },
+    {
+      "test_id": "00_07-D01-T02",
+      "kind": "regression",
+      "setup": "target_dashesを30，time_limitを20にし，playingで開始する．",
+      "actions": ["time_leftが0になる前にダッシュを30回入力する．"],
+      "expected_complete": "dash_countは30，game_stateはclear，選手はfinish_xでゴール姿勢になる．",
+      "expected_defective": "dash_countは30，game_stateはclear，選手はfinish_xでゴール姿勢になる．",
+      "automatable": true
+    },
+    {
+      "test_id": "00_07-D01-T03",
+      "kind": "no-defect",
+      "setup": "playingで開始し，ダッシュを入力しない．",
+      "actions": ["time_leftが0になるまで待つ．"],
+      "expected_complete": "game_stateはgame_overになり，再試行パネルが表示される．",
+      "expected_defective": "game_stateはgame_overになり，再試行パネルが表示される．",
+      "automatable": true
+    }
+  ],
+  "hints": [
+    {"level": 1, "focus": "observation", "prompt": "ボタンを押したとき，回数，残り時間，選手の位置のどれが変わり，どれが変わりませんか．"},
+    {"level": 2, "focus": "reproduction", "prompt": "開始直後から1回だけ押し，数値と選手を同時に観察しましょう．"},
+    {"level": 3, "focus": "variable", "prompt": "dash_countが1のとき，runner_xはstart_xと同じですか，それとも増えていますか．"},
+    {"level": 4, "focus": "control-flow", "prompt": "runner.gsのupdate_runner_positionは，どのメッセージを受け取ったときに呼ばれますか．"}
+  ]
+}
