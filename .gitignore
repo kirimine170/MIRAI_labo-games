@@ -1,3 +1,4 @@
 *.sb3
 /.tools/
 /build/
+/release/

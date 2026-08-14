@@ -21,6 +21,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          fetch-depth: 0
           persist-credentials: false
       - name: Check tracked sources and project metadata
         run: ./scripts/check-repository.sh
@@ -28,6 +29,19 @@ jobs:
         run: PYTHONDONTWRITEBYTECODE=1 python3 tools/validate_catalog.py
       - name: Run catalog unit tests
         run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+      - name: Enforce per-game Semantic Version increases
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE_SHA: ${{ github.event.before }}
+        shell: bash
+        run: |
+          base_sha="${PR_BASE_SHA:-$PUSH_BASE_SHA}"
+          if [[ -z "$base_sha" || "$base_sha" =~ ^0+$ ]]; then
+            echo "No comparable base revision．Skipping version-delta check．"
+          else
+            PYTHONDONTWRITEBYTECODE=1 python3 tools/game_versions.py check "$base_sha"
+          fi
 
   build:
     name: Compile Scratch projects

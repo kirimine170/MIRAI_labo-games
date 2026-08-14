@@ -44,6 +44,20 @@ GOBOSCRIPT_BIN=/path/to/goboscript ./scripts/build-student-defect.sh \
 
 生徒へは生成された`.sb3`と生徒用ワークシートだけを渡し，patch，欠陥manifest，教師用指導書は分離して保管します．
 
+## バージョンとリリース
+
+各完成版ゲームのバージョンは，対応する`catalog/games/<game-id>.json`の`versions.complete.version`を正本とし，Semantic Versioningの`MAJOR.MINOR.PATCH`で管理します．リリース用ビルドでは，`00_09-click-music-v1.0.0.sb3`のようにゲームごとのバージョンをファイル名へ含めます．
+
+```bash
+# 互換性を壊さない機能・教材追加
+python3 tools/game_versions.py bump 00_09 minor
+
+# ローカルでリリース一式を生成
+RELEASE_VERSION=1.0.0 ./scripts/build-release.sh /tmp/mirai-release
+```
+
+ゲームの実行内容へ影響するソースやアセットを変更した場合，CIは対応ゲームのバージョン増加を必須とします．`prerelease-v1.0.0`形式のタグはGitHubのプレリリース，`release-v1.0.0`形式のタグは正式リリースを生成します．正式リリースは，catalog上の全完成版が`verified`になるまで拒否されます．
+
 ## リポジトリ構成
 
 ```text
@@ -54,7 +68,7 @@ materials/pilot/       45分授業用の試行教材
 scripts/               構造検査，ツール導入，一括ビルド
 tools/                 固定バージョンとビルド対象一覧
 docs/                  アーキテクチャと開発フロー
-.github/workflows/     GitHub Actionsによる構造検査とビルド
+.github/workflows/     GitHub Actionsによる検証，ビルド，リリース
 ```
 
 設計上の境界は[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)，変更手順と品質ゲートは[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)を参照してください．

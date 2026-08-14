@@ -37,6 +37,47 @@ GOBOSCRIPT_BIN=/tmp/mirai-goboscript/bin/goboscript ./scripts/build-projects.sh 
 5. ScratchとTurboWarpで，開始，主要操作，成功，失敗，再試行を手動確認する．TurboWarp固有オプションを必須にする場合は，その理由と本家Scratchでの制約を記録する．
 6. アセットごとに権利者，出典，ライセンス，改変の有無を確認する．確認できないアセットを公開物へ追加しない．
 
+## ゲーム単位のSemantic Versioning
+
+完成版`.sb3`のバージョンは，各`catalog/games/*.json`の`versions.complete.version`を正本とする．書式は`MAJOR.MINOR.PATCH`である．
+
+- `MAJOR`：操作方法，状態遷移，学習目標，外部から参照する変数・メッセージなど，既存教材との互換性を壊す変更．
+- `MINOR`：後方互換な機能，演出，教材上の観察点，テスト可能な振る舞いの追加．
+- `PATCH`：意図した仕様を変えない不具合修正，文言・アセット修正，内部整理．
+
+バージョン更新には手編集ではなく，次のコマンドを使う．所有ゲームの欠陥manifestに記録された完成版とbase versionも同時に更新される．
+
+```bash
+python3 tools/game_versions.py bump 00_05 patch
+python3 tools/game_versions.py bump 00_09 minor
+python3 tools/game_versions.py bump 00_00 major
+```
+
+CIは，完成版のコンパイルへ影響するゲームソース，設定，アセットの変更をGit差分から検出する．該当ゲームのバージョンが比較元より大きくない場合は失敗する．教師用`defects/`とアセット権利manifestだけの変更は完成版`.sb3`を変えないため，完成版のバージョン増加対象外である．どの段階を上げるかは変更の互換性を理解する変更者が決め，CIは増加の有無と書式を検査する．
+
+## GitHub Release
+
+`scripts/build-release.sh`は，catalogに登録された完成版を固定goboscriptでビルドし，ゲームID，slug，バージョンを含むファイル名を付ける．同時に`release-manifest.json`と`SHA256SUMS`を生成する．出力先は空のディレクトリでなければならない．
+
+```bash
+RELEASE_VERSION=1.0.0 GOBOSCRIPT_BIN=/path/to/goboscript \
+  ./scripts/build-release.sh /tmp/mirai-release
+```
+
+GitHub Actionsで公開する場合は，検証済みのコミットへSemantic Versioning形式のタグを付ける．
+
+```bash
+# 手動QAとライセンス確定前の公開候補
+git tag -a prerelease-v1.0.0 -m "MIRAI labo games prerelease v1.0.0"
+git push origin prerelease-v1.0.0
+
+# catalog上の全ゲームがverifiedになった後の正式版
+git tag -a release-v1.0.0 -m "MIRAI labo games v1.0.0"
+git push origin release-v1.0.0
+```
+
+タグpush後，`.github/workflows/release.yml`がcatalog，単体テスト，固定ツールチェーン，全`.sb3`のZIP整合を検証し，GitHub Releaseへ7ゲーム，manifest，チェックサムを添付する．`LICENSE`がない場合，または`needs_qa`を含む状態で正式タグを付けると失敗する．現状は実機QAとリポジトリのライセンス方針が未確定であるため，プレリリースを使用する．
+
 ## レビューゲート
 
 ### 実装
