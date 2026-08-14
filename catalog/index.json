@@ -10,14 +10,18 @@
     "catalog/games/00_01.json",
     "catalog/games/00_05.json",
     "catalog/games/00_06.json",
-    "catalog/games/00_07.json"
+    "catalog/games/00_07.json",
+    "catalog/games/00_08.json",
+    "catalog/games/00_09.json"
   ],
   "defects": [
     "catalog/defects/00_00-D01.json",
     "catalog/defects/00_01-D01.json",
     "catalog/defects/00_05-D01.json",
     "catalog/defects/00_06-D01.json",
-    "catalog/defects/00_07-D01.json"
+    "catalog/defects/00_07-D01.json",
+    "catalog/defects/00_08-D01.json",
+    "catalog/defects/00_09-D01.json"
   ],
   "log_examples": [
     "catalog/examples/session-log.json"

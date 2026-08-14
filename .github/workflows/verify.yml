@@ -43,3 +43,10 @@ jobs:
         run: ./scripts/bootstrap-goboscript.sh
       - name: Build and inspect all projects
         run: ./scripts/build-projects.sh "$RUNNER_TEMP/sb3"
+      - name: Build learner-safe defect projects
+        run: |
+          ./scripts/build-student-defect.sh games/00_05_click_cooking games/00_05_click_cooking/defects/00_05-D01.patch "$RUNNER_TEMP/student/00_05-D01.sb3"
+          ./scripts/build-student-defect.sh games/00_06_click_nature games/00_06_click_nature/defects/D01/remove-fish-progress-update.patch "$RUNNER_TEMP/student/00_06-D01.sb3"
+          ./scripts/build-student-defect.sh games/00_07_click_sports games/00_07_click_sports/defects/00_07-D01-stale-runner.patch "$RUNNER_TEMP/student/00_07-D01.sb3"
+          ./scripts/build-student-defect.sh games/00_08_click_security games/00_08_click_security/defects/00_08-D01-stale-virus.patch "$RUNNER_TEMP/student/00_08-D01.sb3"
+          ./scripts/build-student-defect.sh games/00_09_click_music games/00_09_click_music/defects/00_09-D01.patch "$RUNNER_TEMP/student/00_09-D01.sb3"

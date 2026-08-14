@@ -52,7 +52,7 @@
     "minimal_fix": {
       "description": "add_drum_hitでbeat_percentと回数UIを更新した後に，performance_progress_updateを送信する．",
       "edit_targets": [
-        {"path": "games/00_09_click_music/stage.gs", "anchor": "broadcast performance_progress_update"}
+        {"path": "games/00_09_click_music/stage.gs", "anchor": "broadcast \"performance_progress_update\";"}
       ],
       "constraints": [
         "beat_percentの計算後に演出更新を通知する．",

@@ -8,6 +8,11 @@ Scratchのゲームを題材に，不具合の観察，原因仮説，修正，�
 | --- | --- |
 | `games/sword-clicker` | 剣でスライムを倒す連打ゲーム |
 | `games/robot-repair-clicker` | ロボットを修理する連打ゲーム |
+| `games/00_05_click_cooking` | 料理の生地を混ぜる連打ゲーム |
+| `games/00_06_click_nature` | 魚を引き寄せる連打ゲーム |
+| `games/00_07_click_sports` | 選手をゴールへ進めるダッシュ連打ゲーム |
+| `games/00_08_click_security` | ウイルスを除去するスキャン連打ゲーム |
+| `games/00_09_click_music` | 演奏を完成させるドラム連打ゲーム |
 | リポジトリ直下 | goboscriptの最小スモークテスト．教材ゲームではない |
 
 現段階では完成版ゲームのソースが中心です．「教材として完成」の判定には，欠陥版，学習者向け資料，教師向け資料，ヒント，評価基準，テストが別途必要です．
@@ -26,10 +31,26 @@ Scratchのゲームを題材に，不具合の観察，原因仮説，修正，�
 
 出力した`.sb3`はScratchエディタまたはTurboWarpで開き，必ず手動で開始，成功，失敗，再試行まで確認してください．CIのコンパイル成功は，ゲームプレイや教材品質の保証ではありません．
 
+### 学習者用の欠陥版を生成する
+
+欠陥教材では，リポジトリやゲームディレクトリをそのまま生徒へ配布しないでください．`defects/`のpatchと`catalog/defects/`のmanifestには原因，修正箇所，期待解答が含まれます．次の専用スクリプトは一時コピーへpatchを適用し，教師用情報を含まない`.sb3`だけを生成します．
+
+```bash
+GOBOSCRIPT_BIN=/path/to/goboscript ./scripts/build-student-defect.sh \
+  games/00_09_click_music \
+  games/00_09_click_music/defects/00_09-D01.patch \
+  /tmp/student/00_09-D01.sb3
+```
+
+生徒へは生成された`.sb3`と生徒用ワークシートだけを渡し，patch，欠陥manifest，教師用指導書は分離して保管します．
+
 ## リポジトリ構成
 
 ```text
 games/                 プレイ可能なgoboscriptゲーム
+catalog/               ゲーム，欠陥，テスト，ログ例のmanifest
+schemas/               catalogと匿名ログのJSON Schema
+materials/pilot/       45分授業用の試行教材
 scripts/               構造検査，ツール導入，一括ビルド
 tools/                 固定バージョンとビルド対象一覧
 docs/                  アーキテクチャと開発フロー

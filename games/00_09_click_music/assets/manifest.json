@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "scope": "games/00_06_click_nature/assets",
+  "scope": "games/00_09_click_music/assets",
   "assets": [
     {
       "pattern": "*.svg",
-      "source": "Project-original vector artwork created for 00_06",
+      "source": "Project-original vector artwork created for 00_09",
       "rights_holder": "MIRAI_labo-games contributors",
       "license": "Pending repository owner approval",
       "modified": false
