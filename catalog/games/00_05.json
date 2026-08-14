@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0.0",
+  "game_id": "00_05",
+  "slug": "click-cooking",
+  "title": "ぐるぐる！お料理ミックス",
+  "lifecycle": "complete",
+  "summary": "20秒以内にボウルを30回クリックし，生地が混ざる様子を確かめながら完成を目指すゲーム．",
+  "source": {
+    "complete_path": "games/00_05_click_cooking",
+    "toolchain": "goboscript",
+    "configuration": "games/00_05_click_cooking/goboscript.toml",
+    "files": [
+      "stage.gs",
+      "main.gs",
+      "message_panel.gs",
+      "ui_mix_done_tens.gs",
+      "ui_mix_done_ones.gs",
+      "ui_time_tens.gs",
+      "ui_time_ones.gs"
+    ]
+  },
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "assumed_skills": [
+      "クリック操作と画面の変化を対応付けられる",
+      "変数の値が変わる処理を追跡できる",
+      "期待した動作と実際の動作を言葉で比べられる"
+    ]
+  },
+  "learning": {
+    "primary_concepts": [
+      {
+        "id": "state-management",
+        "label": "状態管理",
+        "description": "intro，playing，clear，game_overの状態と，入力を受け付ける期間を対応付ける．"
+      },
+      {
+        "id": "feedback-sync",
+        "label": "即時フィードバック",
+        "description": "1回のクリックに対する回数表示，手応え，生地の見た目の更新を追跡する．"
+      }
+    ],
+    "transfer_family": "click-progress",
+    "learning_goals": [
+      "操作，内部の進捗，数値表示，見た目の変化を順に説明する．",
+      "成功または失敗の後に入力が進行へ影響しないことを，状態と条件から検証する．"
+    ]
+  },
+  "gameplay": {
+    "genre": "clicker",
+    "expected_duration_minutes": 2,
+    "states": ["intro", "playing", "clear", "game_over"],
+    "input_actions": ["ボウルをクリックして生地を混ぜる"],
+    "clear_condition": "time_leftが0より大きい間にmix_doneがmix_target以上になる．",
+    "failure_condition": "mix_doneがmix_target未満のままtime_leftが0以下になる．",
+    "settings": [
+      {"name": "mix_target", "default": 30, "unit": "回", "meaning": "完成に必要なクリック回数"},
+      {"name": "mix_per_click", "default": 1, "unit": "回", "meaning": "1クリックで増える進捗"},
+      {"name": "time_limit", "default": 20, "unit": "秒", "meaning": "ゲーム全体の制限時間"},
+      {"name": "warning_time", "default": 5, "unit": "秒", "meaning": "残り時間の警告を始める値"}
+    ]
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "status": "needs_qa",
+      "source_path": "games/00_05_click_cooking"
+    },
+    "defect_manifests": [
+      "catalog/defects/00_05-D01.json"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_05-C01",
+      "kind": "normal",
+      "scenario": "ゲーム開始後にボウルを8回クリックする．",
+      "expected": "mix_doneは8，mix_percentは26となり，回数表示は8，生地は25％段階の見た目になる．"
+    },
+    {
+      "test_id": "00_05-C02",
+      "kind": "boundary",
+      "scenario": "mix_doneが29のとき，時間内にもう1回クリックする．",
+      "expected": "同じクリックの処理でmix_doneが30となり，game_stateはclearへ遷移して完成表示が出る．"
+    },
+    {
+      "test_id": "00_05-C03",
+      "kind": "state-transition",
+      "scenario": "mix_doneが30未満のまま20秒待ち，時間切れ表示後にボウルをクリックする．",
+      "expected": "game_stateはgame_overのままで，mix_done，生地の見た目，結果表示は変化しない．"
+    },
+    {
+      "test_id": "00_05-C04",
+      "kind": "regression",
+      "scenario": "クリアまたはゲームオーバー後に緑の旗を押す．",
+      "expected": "introから再開し，mix_doneは0，mix_percentは0，time_leftは20へ戻る．"
+    }
+  ]
+}
