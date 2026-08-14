@@ -1,0 +1,7 @@
+<svg version="1.1" width="440" height="184" viewBox="0 0 440 184" xmlns="http://www.w3.org/2000/svg">
+  <rect x="7" y="7" width="426" height="170" rx="18" fill="#f0f9ff" stroke="#0284c7" stroke-width="7"/>
+  <text x="220" y="48" text-anchor="middle" font-family="sans-serif" font-size="30" font-weight="800" fill="#075985">ウイルスを見つけた！</text>
+  <text x="220" y="87" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" fill="#0c4a6e">「じょきょ！」を30回おして</text>
+  <text x="220" y="121" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="700" fill="#0c4a6e">20秒以内に安全な画面へもどそう！</text>
+  <text x="220" y="154" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="800" fill="#ea580c">このパネルをクリックでスタート</text>
+</svg>

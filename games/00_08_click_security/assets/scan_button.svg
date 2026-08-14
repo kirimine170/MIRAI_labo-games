@@ -1,0 +1,6 @@
+<svg version="1.1" width="210" height="66" viewBox="0 0 210 66" xmlns="http://www.w3.org/2000/svg">
+  <rect x="5" y="5" width="200" height="56" rx="25" fill="#0891b2" stroke="#164e63" stroke-width="6"/>
+  <circle cx="37" cy="33" r="17" fill="#cffafe" stroke="#155e75" stroke-width="4"/>
+  <path d="M29 33l6 6 11-14" fill="none" stroke="#0891b2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="132" y="42" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="800" fill="#ffffff">じょきょ！</text>
+</svg>

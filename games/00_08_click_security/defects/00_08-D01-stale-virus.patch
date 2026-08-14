@@ -1,0 +1,12 @@
+diff --git a/games/00_08_click_security/stage.gs b/games/00_08_click_security/stage.gs
+--- a/games/00_08_click_security/stage.gs
++++ b/games/00_08_click_security/stage.gs
+@@ -66,8 +66,6 @@ proc register_scan {
+         if scan_count < target_scans {
+             scan_count++;
+             update_status_ui;
+-            broadcast "virus_progress_update";
+-
+             if scan_count >= target_scans {
+                 finish_game_clear;
+             }

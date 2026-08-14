@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "scope": "games/00_08_click_security/assets",
+  "assets": [
+    {
+      "pattern": "*.svg",
+      "source": "Project-original vector artwork created for 00_08",
+      "rights_holder": "MIRAI_labo-games contributors",
+      "license": "CC0-1.0",
+      "modified": false
+    }
+  ]
+}

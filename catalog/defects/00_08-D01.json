@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "defect_id": "00_08-D01",
+  "game_id": "00_08",
+  "title": "除去回数は増えるがウイルスが弱まらない",
+  "lifecycle": "implemented",
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "estimated_minutes": 35
+  },
+  "learning": {
+    "primary_concept": {"id": "feedback-sync", "label": "表示の同期"},
+    "secondary_concepts": [
+      {"id": "boundary-condition", "label": "境界条件"},
+      {"id": "state-management", "label": "状態管理"},
+      {"id": "message-passing", "label": "メッセージパッシング"}
+    ],
+    "objective": "scan_countと除去表示が更新されているのにウイルスが弱まらない症状から，状態変化を表示へ伝えるメッセージの必要性を説明する．"
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "source_path": "games/00_08_click_security",
+      "behavior": "各入力でscan_countを更新した後，virus_progress_updateを送信してウイルスを段階的に弱める．"
+    },
+    "defective": {
+      "version_label": "defect-stale-virus-stage",
+      "delivery": "patch",
+      "base_version": "1.0.0",
+      "patch_targets": ["games/00_08_click_security/stage.gs"]
+    }
+  },
+  "fault": {
+    "category": "feedback-sync",
+    "symptom": "除去回数と残り時間は更新されるが，8回，15回，23回の境界を越えてもウイルスが最初の危険な見た目のままになる．30回達成時だけ除去済みに変わる．",
+    "expected_behavior": "除去を入力するたびに，回数の増加と同じ入力の結果としてウイルスが段階的に弱まる．",
+    "root_cause": "register_scanからvirus_progress_updateの送信が抜け，virusスプライトのupdate_virus_costumeが途中経過で呼ばれない．",
+    "trigger": "playing中にscan_countが7から8になる入力を行う．"
+  },
+  "reproduction": {
+    "preconditions": [
+      "完成版1.0.0の作業用コピーにgames/00_08_click_security/defects/00_08-D01-stale-virus.patchを適用し，固定goboscriptでビルドする．",
+      "target_scansは30，time_limitは20の初期設定にする．"
+    ],
+    "steps": [
+      {"step": 1, "action": "イントロパネルをクリックして開始し，除去を7回入力する．", "expected_observation": "scan_countは7で，ウイルスはvirus_100の見た目である．"},
+      {"step": 2, "action": "8回目の除去を入力する．", "expected_observation": "scan_countは8になるが，ウイルスはvirus_75へ変わらない．"},
+      {"step": 3, "action": "合計15回になるまで入力する．", "expected_observation": "scan_countは15になるが，ウイルスはvirus_50へ変わらない．"}
+    ]
+  },
+  "repair": {
+    "minimal_fix": {
+      "description": "register_scanでscan_countとステータスUIを更新した後，virus_progress_updateを1回送信する．",
+      "edit_targets": [
+        {"path": "games/00_08_click_security/stage.gs", "anchor": "broadcast \"virus_progress_update\";"}
+      ],
+      "constraints": [
+        "scan_countの更新後に表示更新を通知する．",
+        "1入力につきvirus_progress_updateを1回だけ送信する．",
+        "scan_countの増加，制限時間，clearとgame_overの判定は変更しない．"
+      ]
+    },
+    "acceptable_alternatives": [
+      {
+        "description": "別名の進捗通知を1回送信し，virusスプライト側で受信してupdate_virus_costumeを呼ぶ．",
+        "acceptance_criteria": [
+          "8回，15回，23回の境界直後に正しいウイルス表示になる．",
+          "scan_countとvirus_stageが同じ入力回数の段階を表す．",
+          "30回目のclearとtime_leftが0のgame_overを壊さない．"
+        ]
+      }
+    ],
+    "rejected_shortcuts": [
+      "target_scansを1にして途中段階を発生させなくする．",
+      "除去回数の表示を隠して不一致を見えなくする．",
+      "virus_100.svgを除去済みの絵へ置き換える．"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_08-D01-T01",
+      "kind": "symptom",
+      "setup": "target_scansを30，time_limitを20にし，playingで開始する．",
+      "actions": ["除去を8回入力する．"],
+      "expected_complete": "scan_countは8，removal_percentは26，ウイルスはvirus_75になる．",
+      "expected_defective": "scan_countは8，removal_percentは26だが，ウイルスはvirus_100のままになる．",
+      "automatable": true
+    },
+    {
+      "test_id": "00_08-D01-T02",
+      "kind": "regression",
+      "setup": "target_scansを30，time_limitを20にし，playingで開始する．",
+      "actions": ["除去を7回入力する．"],
+      "expected_complete": "scan_countは7，ウイルスはvirus_100の見た目と大きさを保つ．",
+      "expected_defective": "scan_countは7，ウイルスはvirus_100の見た目と大きさを保つ．",
+      "automatable": true
+    },
+    {
+      "test_id": "00_08-D01-T03",
+      "kind": "regression",
+      "setup": "time_leftが十分に残ったplayingで開始する．",
+      "actions": ["除去を30回入力する．"],
+      "expected_complete": "scan_countは30，game_stateはclear，ウイルスはvirus_removedになる．",
+      "expected_defective": "scan_countは30，game_stateはclear，ウイルスはvirus_removedになる．",
+      "automatable": true
+    }
+  ],
+  "hints": [
+    {"level": 1, "focus": "observation", "prompt": "ボタンを押したとき，除去回数とウイルスの見た目のどちらが変わりませんか．"},
+    {"level": 2, "focus": "reproduction", "prompt": "7回で止めてから，8回目の1入力だけをよく観察しましょう．"},
+    {"level": 3, "focus": "variable", "prompt": "scan_countとvirus_stageのうち，正しく変わっていないのはどちらですか．"},
+    {"level": 4, "focus": "control-flow", "prompt": "virus.gsのupdate_virus_costumeは，どのメッセージを受け取ったときに呼ばれますか．"}
+  ]
+}
