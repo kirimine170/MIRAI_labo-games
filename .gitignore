@@ -2,3 +2,5 @@
 /.tools/
 /build/
 /release/
+/tools/scratch-validation/node_modules/
+/tools/scratch-validation/reports/

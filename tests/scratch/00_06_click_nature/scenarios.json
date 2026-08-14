@@ -1,0 +1,72 @@
+{
+  "complete": [
+    {
+      "name": "initialization-and-invalid-intro-click",
+      "steps": [
+        {"action": "green-flag", "label": "press green flag"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow initialization"},
+        {"action": "expect", "label": "observe intro state", "expected": {"game_state": "intro", "pull_count": 0, "time_left": 22, "visible": false}},
+        {"action": "click", "label": "click hidden reel during intro"},
+        {"action": "expect", "label": "intro click is invalid", "expected": {"game_state": "intro", "pull_count": 0}},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 5000, "expected": {"game_state": "playing"}},
+        {"action": "expect", "label": "observe distant fish", "expected": {"pull_count": 0, "costume": "fish_far", "visible": true, "x": 158, "y": -48}}
+      ]
+    },
+    {
+      "name": "fish-boundary-and-clear",
+      "steps": [
+        {"action": "green-flag", "label": "restart with green flag"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 5000, "expected": {"game_state": "playing", "pull_count": 0}},
+        {"action": "click", "count": 7, "label": "pull seven times"},
+        {"action": "expect", "label": "observe below first boundary", "expected": {"pull_count": 7, "costume": "fish_far", "x": 158, "y": -48}},
+        {"action": "click", "label": "cross first fish boundary"},
+        {"action": "expect", "label": "observe synchronized fish", "expected": {"pull_count": 8, "costume": "fish_quarter", "x": 102, "y": -28}},
+        {"action": "click", "count": 22, "label": "finish remaining pulls"},
+        {"action": "expect", "label": "observe normal success", "expected": {"game_state": "clear", "pull_count": 30, "costume": "fish_caught", "visible": true, "x": -82, "y": 42}}
+      ]
+    },
+    {
+      "name": "green-flag-reset",
+      "steps": [
+        {"action": "green-flag", "label": "start game"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 5000, "expected": {"game_state": "playing", "pull_count": 0}},
+        {"action": "click", "count": 3, "label": "make partial progress"},
+        {"action": "expect", "label": "observe partial progress", "expected": {"pull_count": 3}},
+        {"action": "green-flag", "label": "press green flag again"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow reset"},
+        {"action": "expect", "label": "observe reset intro", "expected": {"game_state": "intro", "pull_count": 0, "time_left": 22, "visible": false}}
+      ]
+    }
+  ],
+  "defective": [
+    {
+      "name": "stale-fish-negative-control",
+      "steps": [
+        {"action": "green-flag", "label": "start defective game"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 5000, "expected": {"game_state": "playing", "pull_count": 0}},
+        {"action": "click", "count": 7, "label": "pull seven times"},
+        {"action": "expect", "label": "observe below boundary", "expected": {"pull_count": 7, "costume": "fish_far", "x": 158, "y": -48}},
+        {"action": "click", "label": "cross first fish boundary"},
+        {"action": "expect", "label": "observe intended defect", "expected": {"pull_count": 8, "costume": "fish_far", "x": 158, "y": -48}},
+        {"action": "negative-control", "label": "apply complete-project expectation", "complete_expected": {"pull_count": 8, "costume": "fish_quarter", "x": 102, "y": -28}}
+      ]
+    },
+    {
+      "name": "defective-clear-regression",
+      "steps": [
+        {"action": "green-flag", "label": "restart defective game"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 5000, "expected": {"game_state": "playing", "pull_count": 0}},
+        {"action": "click", "count": 30, "label": "finish all pulls"},
+        {"action": "expect", "label": "clear remains functional", "expected": {"game_state": "clear", "pull_count": 30, "costume": "fish_caught", "x": -82, "y": 42}}
+      ]
+    },
+    {
+      "name": "defective-green-flag-reset",
+      "steps": [
+        {"action": "green-flag", "label": "reset defective game"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow reset"},
+        {"action": "expect", "label": "observe reset intro", "expected": {"game_state": "intro", "pull_count": 0, "time_left": 22, "visible": false}}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "complete": [
+    {
+      "name": "initialization-start-and-invalid-dash",
+      "steps": [
+        {"action": "green-flag", "label": "press green flag"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow initialization"},
+        {"action": "expect", "label": "observe intro state", "expected": {"game_state": "intro", "dash_count": 0, "time_left": 20, "visible": false}},
+        {"action": "click", "label": "click hidden dash button during intro"},
+        {"action": "expect", "label": "hidden dash is invalid", "expected": {"game_state": "intro", "dash_count": 0}},
+        {"action": "click", "sprite": "message_panel", "label": "click intro panel to start"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 2000, "expected": {"game_state": "playing"}},
+        {"action": "expect", "label": "observe runner start", "expected": {"dash_count": 0, "runner_x": -185, "costume": "runner_step_1", "visible": true, "x": -185, "y": -42}}
+      ]
+    },
+    {
+      "name": "runner-position-and-clear-retry",
+      "steps": [
+        {"action": "green-flag", "label": "restart with green flag"},
+        {"action": "sleep", "milliseconds": 100, "label": "show intro"},
+        {"action": "click", "sprite": "message_panel", "label": "start from intro panel"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 2000, "expected": {"game_state": "playing", "dash_count": 0}},
+        {"action": "set-stage-variable", "variable": "time_left", "value": 120, "label": "stabilize headless success clock"},
+        {"action": "click", "count": 5, "delay_milliseconds": 40, "label": "dash five times"},
+        {"action": "expect", "label": "observe runner progress", "expected": {"dash_count": 5, "progress_percent": 16, "runner_x": {"approx": -125.8333, "tolerance": 0.01}, "costume": "runner_step_2", "x": {"approx": -125.8333, "tolerance": 0.01}}},
+        {"action": "click", "count": 25, "delay_milliseconds": 40, "label": "finish remaining dashes"},
+        {"action": "expect", "label": "observe normal success", "expected": {"game_state": "clear", "dash_count": 30, "progress_percent": 100, "runner_x": 170, "costume": "runner_goal", "visible": true, "x": 170}},
+        {"action": "click", "sprite": "message_panel", "label": "click clear panel to retry"},
+        {"action": "wait-state", "label": "wait for retry", "timeout_milliseconds": 2000, "expected": {"game_state": "playing", "dash_count": 0}},
+        {"action": "expect", "label": "observe retry reset", "expected": {"time_left": 20, "runner_x": -185, "progress_percent": 0, "costume": "runner_step_1", "x": -185}}
+      ]
+    },
+    {
+      "name": "green-flag-reset",
+      "steps": [
+        {"action": "green-flag", "label": "reset from play"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow reset"},
+        {"action": "expect", "label": "observe reset intro", "expected": {"game_state": "intro", "dash_count": 0, "time_left": 20, "runner_x": -185, "visible": false}}
+      ]
+    }
+  ],
+  "defective": [
+    {
+      "name": "stale-runner-negative-control",
+      "steps": [
+        {"action": "green-flag", "label": "start defective project"},
+        {"action": "sleep", "milliseconds": 100, "label": "show intro"},
+        {"action": "click", "sprite": "message_panel", "label": "start from intro panel"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 2000, "expected": {"game_state": "playing", "dash_count": 0}},
+        {"action": "click", "count": 5, "delay_milliseconds": 40, "label": "dash five times"},
+        {"action": "expect", "label": "observe intended defect", "expected": {"dash_count": 5, "runner_x": {"approx": -125.8333, "tolerance": 0.01}, "costume": "runner_step_1", "x": -185}},
+        {"action": "negative-control", "label": "apply complete-project expectation", "complete_expected": {"costume": "runner_step_2", "x": {"approx": -125.8333, "tolerance": 0.01}}}
+      ]
+    },
+    {
+      "name": "defective-clear-regression",
+      "steps": [
+        {"action": "green-flag", "label": "restart defective project"},
+        {"action": "sleep", "milliseconds": 100, "label": "show intro"},
+        {"action": "click", "sprite": "message_panel", "label": "start from intro panel"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 2000, "expected": {"game_state": "playing", "dash_count": 0}},
+        {"action": "set-stage-variable", "variable": "time_left", "value": 120, "label": "stabilize headless success clock"},
+        {"action": "click", "count": 30, "delay_milliseconds": 40, "label": "finish all dashes"},
+        {"action": "expect", "label": "clear remains functional", "expected": {"game_state": "clear", "dash_count": 30, "runner_x": 170, "costume": "runner_goal", "x": 170}}
+      ]
+    },
+    {
+      "name": "defective-green-flag-reset",
+      "steps": [
+        {"action": "green-flag", "label": "reset defective project"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow reset"},
+        {"action": "expect", "label": "observe reset intro", "expected": {"game_state": "intro", "dash_count": 0, "time_left": 20, "runner_x": -185, "visible": false}}
+      ]
+    }
+  ]
+}

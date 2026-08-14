@@ -1,0 +1,72 @@
+{
+  "complete": [
+    {
+      "name": "initialization-and-invalid-intro-click",
+      "steps": [
+        {"action": "green-flag", "label": "press green flag"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow initialization"},
+        {"action": "expect", "label": "observe intro state", "expected": {"game_state": "intro", "repair_done": 0, "repair_percent": 0, "time_left": 60, "visible": false}},
+        {"action": "click", "label": "click hidden robot during intro"},
+        {"action": "expect", "label": "intro click is invalid", "expected": {"game_state": "intro", "repair_done": 0, "repair_percent": 0}},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing"}},
+        {"action": "expect", "label": "observe repair start", "expected": {"repair_done": 0, "repair_percent": 0, "time_left": 60, "costume": "robot_0", "visible": true}}
+      ]
+    },
+    {
+      "name": "costume-boundary-and-clear",
+      "steps": [
+        {"action": "green-flag", "label": "restart with green flag"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing", "repair_done": 0}},
+        {"action": "click", "count": 7, "label": "repair seven times"},
+        {"action": "expect", "label": "observe below 25 percent", "expected": {"repair_done": 7, "repair_percent": 23, "costume": "robot_0"}},
+        {"action": "click", "label": "cross 25 percent boundary"},
+        {"action": "expect", "label": "observe synchronized costume", "expected": {"game_state": "playing", "repair_done": 8, "repair_percent": 26, "costume": "robot_25"}},
+        {"action": "click", "count": 22, "label": "finish remaining repairs"},
+        {"action": "expect", "label": "observe normal success", "expected": {"game_state": "clear", "repair_done": 30, "repair_percent": 100, "repair_left": 0, "costume": "robot_100", "visible": true}}
+      ]
+    },
+    {
+      "name": "green-flag-reset",
+      "steps": [
+        {"action": "green-flag", "label": "start game"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing", "repair_done": 0}},
+        {"action": "click", "count": 3, "label": "make partial progress"},
+        {"action": "expect", "label": "observe partial progress", "expected": {"repair_done": 3, "repair_percent": 10}},
+        {"action": "green-flag", "label": "press green flag again"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow reset"},
+        {"action": "expect", "label": "observe reset intro", "expected": {"game_state": "intro", "repair_done": 0, "repair_percent": 0, "time_left": 60, "visible": false}}
+      ]
+    }
+  ],
+  "defective": [
+    {
+      "name": "stale-costume-negative-control",
+      "steps": [
+        {"action": "green-flag", "label": "start defective game"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing", "repair_done": 0}},
+        {"action": "click", "count": 7, "label": "repair seven times"},
+        {"action": "expect", "label": "observe below boundary", "expected": {"repair_done": 7, "repair_percent": 23, "costume": "robot_0"}},
+        {"action": "click", "label": "cross 25 percent boundary"},
+        {"action": "expect", "label": "observe intended defect", "expected": {"repair_done": 8, "repair_percent": 26, "costume": "robot_0"}},
+        {"action": "negative-control", "label": "apply complete-project expectation", "complete_expected": {"repair_done": 8, "repair_percent": 26, "costume": "robot_25"}}
+      ]
+    },
+    {
+      "name": "defective-clear-regression",
+      "steps": [
+        {"action": "green-flag", "label": "restart defective game"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing", "repair_done": 0}},
+        {"action": "click", "count": 30, "label": "finish all repairs"},
+        {"action": "expect", "label": "clear remains functional", "expected": {"game_state": "clear", "repair_done": 30, "repair_percent": 100, "costume": "robot_100"}}
+      ]
+    },
+    {
+      "name": "defective-green-flag-reset",
+      "steps": [
+        {"action": "green-flag", "label": "reset defective game"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow reset"},
+        {"action": "expect", "label": "observe reset intro", "expected": {"game_state": "intro", "repair_done": 0, "repair_percent": 0, "time_left": 60, "visible": false}}
+      ]
+    }
+  ]
+}
