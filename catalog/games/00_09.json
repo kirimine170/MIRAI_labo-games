@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0.0",
+  "game_id": "00_09",
+  "slug": "click-music",
+  "title": "ドンドン！ドラムライブ",
+  "lifecycle": "complete",
+  "summary": "20秒以内にドラムを30回クリックし，ビートとステージ演出を盛り上げてライブ成功を目指すゲーム．",
+  "source": {
+    "complete_path": "games/00_09_click_music",
+    "toolchain": "goboscript",
+    "configuration": "games/00_09_click_music/goboscript.toml",
+    "files": [
+      "stage.gs",
+      "main.gs",
+      "message_panel.gs",
+      "ui_hit_done_tens.gs",
+      "ui_hit_done_ones.gs",
+      "ui_time_tens.gs",
+      "ui_time_ones.gs"
+    ]
+  },
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "assumed_skills": [
+      "クリック操作と画面の変化を対応付けられる",
+      "メッセージ送信と受信の対応を追跡できる",
+      "期待した動作と実際の動作を言葉で比べられる"
+    ]
+  },
+  "learning": {
+    "primary_concepts": [
+      {
+        "id": "feedback-sync",
+        "label": "表示の同期",
+        "description": "演奏回数とbeat_percentの更新後に，ドラムの段階演出へ通知する流れを追跡する．"
+      },
+      {
+        "id": "state-management",
+        "label": "状態管理",
+        "description": "intro，playing，clear，game_overの状態と，入力を受け付ける期間を対応付ける．"
+      }
+    ],
+    "transfer_family": "click-progress",
+    "learning_goals": [
+      "操作，内部の進捗，回数表示，ステージ演出の変化を順に説明する．",
+      "数値が正しくても見た目が同期しない場合に，通知の送信元と受信先を調べる．"
+    ]
+  },
+  "gameplay": {
+    "genre": "clicker",
+    "expected_duration_minutes": 2,
+    "states": ["intro", "playing", "clear", "game_over"],
+    "input_actions": ["ドラムをクリックしてビートを刻む"],
+    "clear_condition": "time_leftが0より大きい間にhit_doneがhit_target以上になる．",
+    "failure_condition": "hit_doneがhit_target未満のままtime_leftが0以下になる．",
+    "settings": [
+      {"name": "hit_target", "default": 30, "unit": "打", "meaning": "ライブ成功に必要なクリック回数"},
+      {"name": "hit_per_click", "default": 1, "unit": "打", "meaning": "1クリックで増える演奏進捗"},
+      {"name": "time_limit", "default": 20, "unit": "秒", "meaning": "ゲーム全体の制限時間"},
+      {"name": "warning_time", "default": 5, "unit": "秒", "meaning": "残り時間の警告を始める値"}
+    ]
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "status": "needs_qa",
+      "source_path": "games/00_09_click_music"
+    },
+    "defect_manifests": [
+      "catalog/defects/00_09-D01.json"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_09-C01",
+      "kind": "normal",
+      "scenario": "ゲーム開始後にドラムを1回クリックする．",
+      "expected": "hit_doneは1になり，同じ操作に対してドラムが明るく動く即時反応が出る．"
+    },
+    {
+      "test_id": "00_09-C02",
+      "kind": "boundary",
+      "scenario": "ドラムを8回クリックする．",
+      "expected": "hit_doneは8，beat_percentは26となり，ドラムは25％段階の演出へ変わる．"
+    },
+    {
+      "test_id": "00_09-C03",
+      "kind": "state-transition",
+      "scenario": "時間内にドラムを30回クリックする．",
+      "expected": "hit_doneは30，beat_percentは100，game_stateはclearとなり，ライブ成功表示が出る．"
+    },
+    {
+      "test_id": "00_09-C04",
+      "kind": "regression",
+      "scenario": "30回未満で時間切れにし，結果表示後に緑の旗を押す．",
+      "expected": "最初はgame_overとなり，緑の旗ではintroからhit_doneが0，time_leftが20へ戻って再開する．"
+    }
+  ]
+}

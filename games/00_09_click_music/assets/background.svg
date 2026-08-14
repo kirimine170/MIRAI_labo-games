@@ -1,0 +1,18 @@
+<svg version="1.1" width="480" height="360" viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="360" fill="#171033"/>
+  <path d="M0 0h105L72 235H0zM480 0H375l33 235h72z" fill="#5b155f"/>
+  <path d="M88 0l80 250M392 0l-80 250M240 0v250" stroke="#fef08a" stroke-width="24" opacity="0.12"/>
+  <rect y="232" width="480" height="128" fill="#312e81"/>
+  <path d="M0 244h480M0 326h480" stroke="#818cf8" stroke-width="6" opacity="0.45"/>
+  <ellipse cx="240" cy="278" rx="185" ry="55" fill="#c084fc" opacity="0.15"/>
+  <rect x="18" y="8" width="254" height="48" rx="16" fill="#ffffff" stroke="#22d3ee" stroke-width="4"/>
+  <rect x="292" y="8" width="170" height="48" rx="16" fill="#ffffff" stroke="#facc15" stroke-width="4"/>
+  <text x="34" y="40" font-family="sans-serif" font-size="22" font-weight="700" fill="#0e7490">ビート</text>
+  <text x="172" y="40" font-family="sans-serif" font-size="21" font-weight="700" fill="#0e7490">/ 30だ</text>
+  <text x="306" y="40" font-family="sans-serif" font-size="21" font-weight="700" fill="#854d0e">のこり</text>
+  <text x="424" y="40" font-family="sans-serif" font-size="19" font-weight="700" fill="#854d0e">びょう</text>
+  <rect x="24" y="260" width="67" height="76" rx="8" fill="#111827" stroke="#6366f1" stroke-width="5"/>
+  <circle cx="57" cy="282" r="12" fill="#4f46e5"/><circle cx="57" cy="316" r="18" fill="#1e1b4b" stroke="#818cf8" stroke-width="4"/>
+  <rect x="389" y="260" width="67" height="76" rx="8" fill="#111827" stroke="#6366f1" stroke-width="5"/>
+  <circle cx="422" cy="282" r="12" fill="#4f46e5"/><circle cx="422" cy="316" r="18" fill="#1e1b4b" stroke="#818cf8" stroke-width="4"/>
+</svg>
