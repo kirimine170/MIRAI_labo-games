@@ -3,3 +3,6 @@
 .
 games/robot-repair-clicker
 games/sword-clicker
+games/00_05_click_cooking
+games/00_06_click_nature
+games/00_07_click_sports

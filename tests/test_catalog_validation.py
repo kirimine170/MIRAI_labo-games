@@ -30,9 +30,9 @@ class CatalogValidationTests(unittest.TestCase):
     def test_repository_catalog_is_valid(self) -> None:
         report = validate_catalog(REPOSITORY_ROOT)
 
-        self.assertEqual(report.games, 2)
-        self.assertEqual(report.defects, 2)
-        self.assertEqual(report.log_examples, 1)
+        self.assertEqual(report.games, len(self.index["games"]))
+        self.assertEqual(report.defects, len(self.index["defects"]))
+        self.assertEqual(report.log_examples, len(self.index["log_examples"]))
 
     def test_defect_schema_requires_minimal_fix(self) -> None:
         schema = load_json(REPOSITORY_ROOT, "schemas/defect.schema.json")

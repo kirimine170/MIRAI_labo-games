@@ -12,7 +12,7 @@
     "files": [
       "stage.gs",
       "runner.gs",
-      "dash_button.gs",
+      "main.gs",
       "message_panel.gs",
       "status_board.gs"
     ]
