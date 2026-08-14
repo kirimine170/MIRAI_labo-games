@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "game_id": "00_06",
+  "slug": "click-nature-fishing",
+  "title": "自然：魚を釣り上げよう",
+  "lifecycle": "complete",
+  "summary": "22秒以内にリールを30回巻き，段階的に近づく魚を釣り上げる連打ゲーム．",
+  "source": {
+    "complete_path": "games/00_06_click_nature",
+    "toolchain": "goboscript",
+    "configuration": "games/00_06_click_nature/goboscript.toml",
+    "files": [
+      "stage.gs",
+      "main.gs",
+      "fish.gs",
+      "message_panel.gs",
+      "ui_panel.gs",
+      "ui_pull_tens.gs",
+      "ui_pull_ones.gs",
+      "ui_time_tens.gs",
+      "ui_time_ones.gs"
+    ]
+  },
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "assumed_skills": [
+      "変数の値を画面表示と対応付けられる",
+      "メッセージ送信と受信の対応を追跡できる",
+      "期待した動きと実際の動きを分けて記録できる"
+    ]
+  },
+  "learning": {
+    "primary_concepts": [
+      {
+        "id": "feedback-sync",
+        "label": "表示の同期",
+        "description": "入力回数の内部状態と魚の見た目を，更新イベントで一致させる．"
+      },
+      {
+        "id": "boundary-condition",
+        "label": "境界条件",
+        "description": "8回，15回，23回，30回の境界で表示と状態が切り替わることを確かめる．"
+      },
+      {
+        "id": "state-management",
+        "label": "状態管理",
+        "description": "intro，playing，clear，game_overの状態と各表示を対応付ける．"
+      }
+    ],
+    "transfer_family": "click-progress",
+    "learning_goals": [
+      "入力回数が増える処理と魚の表示が変わる処理を分けて追跡する．",
+      "境界の直前と直後を比較し，表示同期の欠陥を再現する．"
+    ]
+  },
+  "gameplay": {
+    "genre": "clicker",
+    "expected_duration_minutes": 1,
+    "states": ["intro", "playing", "clear", "game_over"],
+    "input_actions": ["画面下の「リールをまく！」をクリックする"],
+    "clear_condition": "pull_countがrequired_pull以上になり，魚が釣り上げ表示になる．",
+    "failure_condition": "pull_countがrequired_pullに達する前にtime_leftが0以下になる．",
+    "settings": [
+      {"name": "required_pull", "default": 30, "unit": "回", "meaning": "魚を釣り上げるために必要な入力回数"},
+      {"name": "pull_per_click", "default": 1, "unit": "回", "meaning": "1クリックで増える引き寄せ回数"},
+      {"name": "time_limit", "default": 22, "unit": "秒", "meaning": "1回のゲームの制限時間"},
+      {"name": "warning_time", "default": 5, "unit": "秒", "meaning": "残り時間表示を強調し始める時間"}
+    ]
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "status": "needs_qa",
+      "source_path": "games/00_06_click_nature"
+    },
+    "defect_manifests": [
+      "catalog/defects/00_06-D01.json"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_06-C01",
+      "kind": "normal",
+      "scenario": "開始後に7回クリックする．",
+      "expected": "pull_countは7で，魚はfish_farの位置と見た目を保つ．"
+    },
+    {
+      "test_id": "00_06-C02",
+      "kind": "boundary",
+      "scenario": "pull_countが7のときにもう1回クリックする．",
+      "expected": "pull_countは8になり，同じ入力の結果として魚がfish_quarterへ近づく．"
+    },
+    {
+      "test_id": "00_06-C03",
+      "kind": "state-transition",
+      "scenario": "制限時間内に30回クリックする．",
+      "expected": "game_stateはclearとなり，fish_caughtと成功メッセージを表示する．"
+    },
+    {
+      "test_id": "00_06-C04",
+      "kind": "state-transition",
+      "scenario": "開始後に30回へ到達しないまま22秒待つ．",
+      "expected": "game_stateはgame_overとなり，魚を隠して再挑戦メッセージを表示する．"
+    }
+  ]
+}
