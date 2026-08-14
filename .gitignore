@@ -1,1 +1,3 @@
 *.sb3
+/.tools/
+/build/
