@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0.0",
+  "game_id": "00_08",
+  "slug": "click-security-virus-removal",
+  "title": "ウイルス除去チャレンジ",
+  "lifecycle": "complete",
+  "summary": "20秒以内に除去ボタンを30回押し，段階的に弱まるウイルスを取り除く連打ゲーム．",
+  "source": {
+    "complete_path": "games/00_08_click_security",
+    "toolchain": "goboscript",
+    "configuration": "games/00_08_click_security/goboscript.toml",
+    "files": [
+      "stage.gs",
+      "virus.gs",
+      "main.gs",
+      "message_panel.gs",
+      "status_board.gs"
+    ]
+  },
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "assumed_skills": [
+      "画面の数値とウイルスの見た目を対応付けられる",
+      "if文の条件を読める",
+      "メッセージの送信元と受信先を追跡できる"
+    ]
+  },
+  "learning": {
+    "primary_concepts": [
+      {
+        "id": "feedback-sync",
+        "label": "表示の同期",
+        "description": "除去回数の更新を，ウイルスの見た目へ同じ入力の結果として反映する．"
+      },
+      {
+        "id": "boundary-condition",
+        "label": "境界条件",
+        "description": "8回，15回，23回，30回の境界前後で見た目が切り替わることを確かめる．"
+      },
+      {
+        "id": "state-transition",
+        "label": "状態遷移",
+        "description": "intro，playing，clear，game_overの状態と，入力受付や表示の関係を追跡する．"
+      }
+    ],
+    "transfer_family": "click-progress",
+    "learning_goals": [
+      "除去回数は正しいが表示が変わらない症状から，表示更新イベントを追跡する．",
+      "境界の直前と直後を比較し，内部状態と視覚フィードバックを別々に検証する．"
+    ]
+  },
+  "gameplay": {
+    "genre": "clicker",
+    "expected_duration_minutes": 2,
+    "states": ["intro", "playing", "clear", "game_over"],
+    "input_actions": ["除去ボタンをクリックする", "スペースキーを押す"],
+    "clear_condition": "time_leftが0より大きい間にscan_countがtarget_scans以上になる．",
+    "failure_condition": "scan_countがtarget_scans未満のままtime_leftが0以下になる．",
+    "settings": [
+      {"name": "target_scans", "default": 30, "unit": "回", "meaning": "ウイルス除去に必要な入力数"},
+      {"name": "time_limit", "default": 20, "unit": "秒", "meaning": "1プレイの制限時間"},
+      {"name": "warning_time", "default": 5, "unit": "秒", "meaning": "残り時間表示を強調する境界"}
+    ]
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "status": "needs_qa",
+      "source_path": "games/00_08_click_security"
+    },
+    "defect_manifests": ["catalog/defects/00_08-D01.json"]
+  },
+  "tests": [
+    {
+      "test_id": "00_08-C01",
+      "kind": "normal",
+      "scenario": "playing中に除去を7回入力する．",
+      "expected": "scan_countは7で，ウイルスはvirus_100の大きさと見た目を保つ．"
+    },
+    {
+      "test_id": "00_08-C02",
+      "kind": "boundary",
+      "scenario": "scan_countが7のときにもう1回入力する．",
+      "expected": "scan_countは8になり，同じ入力の結果としてウイルスがvirus_75へ弱まる．"
+    },
+    {
+      "test_id": "00_08-C03",
+      "kind": "state-transition",
+      "scenario": "制限時間内に除去を30回入力する．",
+      "expected": "game_stateはclearとなり，virus_removedと成功パネルを表示する．"
+    },
+    {
+      "test_id": "00_08-C04",
+      "kind": "regression",
+      "scenario": "clearまたはgame_overのパネルをクリックする．",
+      "expected": "scan_countが0，time_leftが20，virus_stageが100へ戻り，playingで再開する．"
+    }
+  ]
+}
