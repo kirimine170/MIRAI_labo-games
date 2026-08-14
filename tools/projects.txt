@@ -1,0 +1,5 @@
+# One goboscript project path per line．Paths are relative to the repository root．
+# The root project is a compiler smoke test．The playable games live under games/．
+.
+games/robot-repair-clicker
+games/sword-clicker
