@@ -1,0 +1,11 @@
+diff --git a/games/00_06_click_nature/stage.gs b/games/00_06_click_nature/stage.gs
+--- a/games/00_06_click_nature/stage.gs
++++ b/games/00_06_click_nature/stage.gs
+@@ -67,7 +67,5 @@ proc add_pull_progress {
+         pull_count = required_pull;
+     }
+     update_pull_ui;
+-    broadcast "fish_progress_update";
+-
+     if pull_count >= required_pull {
+         finish_game_clear;

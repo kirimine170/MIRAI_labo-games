@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0.0",
+  "defect_id": "00_06-D01",
+  "game_id": "00_06",
+  "title": "回数が増えても魚が近づかない",
+  "lifecycle": "implemented",
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "estimated_minutes": 35
+  },
+  "learning": {
+    "primary_concept": {"id": "feedback-sync", "label": "表示の同期"},
+    "secondary_concepts": [
+      {"id": "boundary-condition", "label": "境界条件"},
+      {"id": "state-management", "label": "状態管理"},
+      {"id": "message-passing", "label": "メッセージパッシング"}
+    ],
+    "objective": "引き寄せ回数の内部状態は正しいのに魚の見た目だけが更新されない症状を再現し，状態更新後の通知が必要な理由を説明する．"
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "source_path": "games/00_06_click_nature",
+      "behavior": "pull_countの更新後にfish_progress_updateを送信し，境界に応じて魚を近づける．"
+    },
+    "defective": {
+      "version_label": "defect-stale-fish-position",
+      "delivery": "patch",
+      "base_version": "1.0.0",
+      "patch_targets": ["games/00_06_click_nature/stage.gs"]
+    }
+  },
+  "fault": {
+    "category": "feedback-sync",
+    "symptom": "引き寄せ回数は増えるが，8回，15回，23回の境界を越えても魚が遠い位置から動かない．",
+    "expected_behavior": "境界を越えたクリックと同じ入力処理の中で，魚の見た目と位置が次の段階へ変わる．",
+    "root_cause": "add_pull_progressからfish_progress_updateの送信が削除され，fish.gsのupdate_fish_costumeが途中経過で呼ばれない．",
+    "trigger": "pull_countが7から8になるクリックを行う．"
+  },
+  "reproduction": {
+    "preconditions": [
+      "games/00_06_click_nature/defects/D01/remove-fish-progress-update.patchを完成版へ適用する．",
+      "required_pullは30，pull_per_clickは1のままにする．",
+      "緑の旗から開始し，playingになるまで待つ．"
+    ],
+    "steps": [
+      {"step": 1, "action": "「リールをまく！」を7回クリックする．", "expected_observation": "引き寄せ表示は7で，魚は遠い位置にいる．"},
+      {"step": 2, "action": "もう1回クリックする．", "expected_observation": "引き寄せ表示は8になるが，魚はfish_quarterへ変わらず遠い位置のままである．"},
+      {"step": 3, "action": "さらに7回クリックし，合計15回にする．", "expected_observation": "引き寄せ表示は15になるが，魚はfish_midへ変わらない．"}
+    ]
+  },
+  "repair": {
+    "minimal_fix": {
+      "description": "add_pull_progressでpull_countと回数UIを更新した直後にfish_progress_updateを1回送信する．",
+      "edit_targets": [
+        {"path": "games/00_06_click_nature/stage.gs", "anchor": "broadcast fish_progress_update"}
+      ],
+      "constraints": [
+        "pull_countを更新した後に魚へ通知する．",
+        "1クリックにつきfish_progress_updateを1回だけ送信する．",
+        "clearとgame_overの状態遷移は変更しない．"
+      ]
+    },
+    "acceptable_alternatives": [
+      {
+        "description": "同じ更新位置から別名の進捗メッセージを1回送信し，fish.gs側で受信してupdate_fish_costumeを呼ぶ．",
+        "acceptance_criteria": [
+          "8回，15回，23回の境界直後に正しい見た目と位置になる．",
+          "30回でfish_caughtとclearになる．",
+          "7回の時点ではfish_farのままである．"
+        ]
+      }
+    ],
+    "rejected_shortcuts": [
+      "fish_far.svgを近い魚の絵へ置き換えて症状を隠す．",
+      "required_pullを1にして途中段階を発生させなくする．",
+      "回数UIを隠して状態と表示の不一致を見えなくする．"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_06-D01-T01",
+      "kind": "symptom",
+      "setup": "required_pullを30，pull_per_clickを1にして開始する．",
+      "actions": ["7回クリックする．", "8回目をクリックする．"],
+      "expected_complete": "pull_countは8，魚はfish_quarterとなり，開始位置より左上へ近づく．",
+      "expected_defective": "pull_countは8だが，魚はfish_farの見た目と開始位置のままになる．",
+      "automatable": true
+    },
+    {
+      "test_id": "00_06-D01-T02",
+      "kind": "regression",
+      "setup": "required_pullを30，pull_per_clickを1にして開始する．",
+      "actions": ["7回クリックする．"],
+      "expected_complete": "pull_countは7，魚はfish_farの見た目と開始位置にいる．",
+      "expected_defective": "pull_countは7，魚はfish_farの見た目と開始位置にいる．",
+      "automatable": true
+    },
+    {
+      "test_id": "00_06-D01-T03",
+      "kind": "regression",
+      "setup": "制限時間が十分に残った状態で開始する．",
+      "actions": ["30回クリックする．"],
+      "expected_complete": "pull_countは30，game_stateはclear，魚はfish_caughtになる．",
+      "expected_defective": "pull_countは30，game_stateはclear，魚はfish_caughtになる．",
+      "automatable": true
+    }
+  ],
+  "hints": [
+    {"level": 1, "focus": "observation", "prompt": "引き寄せの数字と魚の位置は，どの回数から合わなくなりますか．"},
+    {"level": 2, "focus": "reproduction", "prompt": "7回で止めてから，8回目の1クリックだけをよく観察しましょう．"},
+    {"level": 3, "focus": "variable", "prompt": "pull_countとfish_stageのうち，正しく変わっていないのはどちらですか．"},
+    {"level": 4, "focus": "control-flow", "prompt": "update_fish_costumeは，どのメッセージを受け取ったときに呼ばれますか．"}
+  ]
+}
