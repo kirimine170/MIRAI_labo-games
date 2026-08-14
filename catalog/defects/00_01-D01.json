@@ -3,7 +3,7 @@
   "defect_id": "00_01-D01",
   "game_id": "00_01",
   "title": "\u4fee\u7406\u7387\u304c\u5897\u3048\u3066\u3082\u898b\u305f\u76ee\u304c\u5909\u308f\u3089\u306a\u3044",
-  "lifecycle": "planned",
+  "lifecycle": "implemented",
   "target_learners": {
     "grades": ["\u5c0f4", "\u5c0f5", "\u5c0f6"],
     "support": "facilitated",
@@ -25,7 +25,7 @@
     },
     "defective": {
       "version_label": "defect-stale-robot-costume",
-      "delivery": "planned_patch",
+      "delivery": "patch",
       "base_version": "1.0.0",
       "patch_targets": ["games/robot-repair-clicker/stage.gs"]
     }
