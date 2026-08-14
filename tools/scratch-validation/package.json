@@ -1,0 +1,17 @@
+{
+  "name": "mirai-scratch-validation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Version-locked Scratch 3 validation harness for MIRAI_labo-games",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "24.6.0"
+  },
+  "scripts": {
+    "test": "node test/runner-unit.test.js"
+  },
+  "dependencies": {
+    "@scratch/scratch-storage": "15.0.1",
+    "@scratch/scratch-vm": "15.0.1"
+  }
+}

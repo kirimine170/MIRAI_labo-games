@@ -1,0 +1,63 @@
+{
+  "complete": [
+    {
+      "name": "initialization-and-invalid-intro-click",
+      "steps": [
+        {"action": "green-flag", "label": "press green flag"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow initialization"},
+        {"action": "expect", "label": "observe intro state", "expected": {"game_state": "intro", "defeated_count": 0, "current_hp": 0, "visible": false}},
+        {"action": "click", "label": "click hidden slime during intro"},
+        {"action": "expect", "label": "intro click is invalid", "expected": {"game_state": "intro", "defeated_count": 0, "current_hp": 0}},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing"}},
+        {"action": "expect", "label": "observe first slime", "expected": {"defeated_count": 0, "current_hp": 5, "max_hp": 5, "costume": "slime", "visible": true}}
+      ]
+    },
+    {
+      "name": "hp-zero-boundary-and-clear",
+      "steps": [
+        {"action": "green-flag", "label": "restart with green flag"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing", "current_hp": 5}},
+        {"action": "click", "count": 4, "label": "click first slime four times"},
+        {"action": "expect", "label": "observe HP one boundary", "expected": {"game_state": "playing", "current_hp": 1, "defeated_count": 0}},
+        {"action": "click", "label": "click first slime at HP one"},
+        {"action": "expect", "label": "advance at HP zero", "expected": {"game_state": "playing", "current_hp": 6, "max_hp": 6, "defeated_count": 1}},
+        {"action": "click", "count": 13, "label": "defeat remaining slimes"},
+        {"action": "expect", "label": "observe normal success", "expected": {"game_state": "clear", "current_hp": 0, "defeated_count": 3, "visible": false}}
+      ]
+    },
+    {
+      "name": "green-flag-reset",
+      "steps": [
+        {"action": "green-flag", "label": "start game"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing", "current_hp": 5}},
+        {"action": "click", "count": 2, "label": "make partial progress"},
+        {"action": "expect", "label": "observe partial progress", "expected": {"current_hp": 3, "defeated_count": 0}},
+        {"action": "green-flag", "label": "press green flag again"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow reset"},
+        {"action": "expect", "label": "observe reset intro", "expected": {"game_state": "intro", "current_hp": 0, "defeated_count": 0, "visible": false}}
+      ]
+    }
+  ],
+  "defective": [
+    {
+      "name": "hp-zero-stall-negative-control",
+      "steps": [
+        {"action": "green-flag", "label": "start defective game"},
+        {"action": "wait-state", "label": "wait for playing", "timeout_milliseconds": 6000, "expected": {"game_state": "playing", "current_hp": 5}},
+        {"action": "click", "count": 5, "label": "click first slime five times"},
+        {"action": "expect", "label": "observe intended defect", "expected": {"game_state": "playing", "current_hp": 0, "defeated_count": 0}},
+        {"action": "click", "label": "attempt one additional click"},
+        {"action": "expect", "label": "observe stalled boundary", "expected": {"game_state": "playing", "current_hp": 0, "defeated_count": 0}},
+        {"action": "negative-control", "label": "apply complete-project expectation", "complete_expected": {"current_hp": 6, "defeated_count": 1}}
+      ]
+    },
+    {
+      "name": "defective-green-flag-reset",
+      "steps": [
+        {"action": "green-flag", "label": "reset defective game"},
+        {"action": "sleep", "milliseconds": 100, "label": "allow reset"},
+        {"action": "expect", "label": "observe reset intro", "expected": {"game_state": "intro", "current_hp": 0, "defeated_count": 0, "visible": false}}
+      ]
+    }
+  ]
+}

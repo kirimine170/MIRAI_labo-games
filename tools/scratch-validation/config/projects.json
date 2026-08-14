@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "scratch_vm_version": "15.0.1",
+  "games": [
+    {
+      "game": "sword-clicker",
+      "input_sprite": "main",
+      "observe_sprite": "main",
+      "complete_artifact": "sword-clicker.sb3",
+      "defect_artifact": "sword-clicker.sb3",
+      "scenarios": "../../../tests/scratch/sword-clicker/scenarios.json"
+    },
+    {
+      "game": "robot-repair-clicker",
+      "input_sprite": "main",
+      "observe_sprite": "main",
+      "complete_artifact": "robot-repair-clicker.sb3",
+      "defect_artifact": "robot-repair-clicker.sb3",
+      "scenarios": "../../../tests/scratch/robot-repair-clicker/scenarios.json"
+    },
+    {
+      "game": "00_06_click_nature",
+      "input_sprite": "main",
+      "observe_sprite": "fish",
+      "complete_artifact": "00_06_click_nature.sb3",
+      "defect_artifact": "00_06_click_nature.sb3",
+      "scenarios": "../../../tests/scratch/00_06_click_nature/scenarios.json"
+    },
+    {
+      "game": "00_07_click_sports",
+      "input_sprite": "main",
+      "observe_sprite": "runner",
+      "complete_artifact": "00_07_click_sports.sb3",
+      "defect_artifact": "00_07_click_sports.sb3",
+      "scenarios": "../../../tests/scratch/00_07_click_sports/scenarios.json"
+    }
+  ]
+}

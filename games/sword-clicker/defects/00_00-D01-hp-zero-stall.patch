@@ -1,0 +1,8 @@
+diff --git a/games/sword-clicker/main.gs b/games/sword-clicker/main.gs
+--- a/games/sword-clicker/main.gs
++++ b/games/sword-clicker/main.gs
+@@ -52,3 +52,3 @@ onclick {
+-            if current_hp <= 0 {
++            if current_hp < 0 {
+                 broadcast "slime_defeated";
+             }

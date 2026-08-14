@@ -1,0 +1,10 @@
+diff --git a/games/robot-repair-clicker/stage.gs b/games/robot-repair-clicker/stage.gs
+--- a/games/robot-repair-clicker/stage.gs
++++ b/games/robot-repair-clicker/stage.gs
+@@ -102,5 +102,4 @@ proc add_repair_progress {
+     update_repair_ui;
+     update_percent_ui;
+-    broadcast "robot_progress_update";
+-
++
+     if repair_done >= max_repair {
