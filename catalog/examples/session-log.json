@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "session_id": "S-example-0001",
+  "participant_key": "P-example-0042",
+  "grade": "\u5c0f5",
+  "study_id": "pilot-2026-a",
+  "game_id": "00_00",
+  "variant": "defective",
+  "defect_id": "00_00-D01",
+  "started_at": "2026-08-14T10:00:00+09:00",
+  "events": [
+    {
+      "sequence": 1,
+      "elapsed_ms": 0,
+      "type": "session_started",
+      "payload": {}
+    },
+    {
+      "sequence": 2,
+      "elapsed_ms": 21500,
+      "type": "symptom_observed",
+      "payload": {"observation": "HP\u304c0\u306b\u306a\u3063\u3066\u3082\u6b21\u306e\u30b9\u30e9\u30a4\u30e0\u304c\u51fa\u306a\u3044\uff0e"}
+    },
+    {
+      "sequence": 3,
+      "elapsed_ms": 72000,
+      "type": "hypothesis_recorded",
+      "payload": {"hypothesis": "HP\u304c0\u306e\u3068\u304d\u306e\u6761\u4ef6\u304c\u5b9f\u884c\u3055\u308c\u3066\u3044\u306a\u3044\uff0e"}
+    },
+    {
+      "sequence": 4,
+      "elapsed_ms": 180000,
+      "type": "code_change",
+      "payload": {
+        "file": "games/sword-clicker/main.gs",
+        "change_summary": "\u8a0e\u4f10\u5224\u5b9a\u306b0\u3092\u542b\u3081\u305f\uff0e"
+      }
+    },
+    {
+      "sequence": 5,
+      "elapsed_ms": 230000,
+      "type": "test_run",
+      "payload": {"test_id": "00_00-D01-T01", "result": "pass"}
+    },
+    {
+      "sequence": 6,
+      "elapsed_ms": 260000,
+      "type": "task_completed",
+      "payload": {"completed": true}
+    }
+  ]
+}

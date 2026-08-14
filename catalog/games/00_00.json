@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "game_id": "00_00",
+  "slug": "sword-clicker",
+  "title": "\u5263\u3067\u30b9\u30e9\u30a4\u30e0\u9000\u6cbb",
+  "lifecycle": "complete",
+  "summary": "\u5236\u9650\u6642\u9593\u5185\u306b\u30b9\u30e9\u30a4\u30e0\u3092\u30af\u30ea\u30c3\u30af\u3057\uff0c3\u4f53\u3092\u9806\u306b\u5012\u3059\u30b2\u30fc\u30e0\uff0e",
+  "source": {
+    "complete_path": "games/sword-clicker",
+    "toolchain": "goboscript",
+    "configuration": "games/sword-clicker/goboscript.toml",
+    "files": [
+      "stage.gs",
+      "main.gs",
+      "message_panel.gs"
+    ]
+  },
+  "target_learners": {
+    "grades": ["\u5c0f4", "\u5c0f5", "\u5c0f6"],
+    "support": "facilitated",
+    "assumed_skills": [
+      "\u5909\u6570\u306e\u5024\u3092\u753b\u9762\u8868\u793a\u3068\u5bfe\u5fdc\u4ed8\u3051\u3089\u308c\u308b",
+      "if\u6587\u306e\u6761\u4ef6\u3092\u8aad\u3081\u308b",
+      "\u5b9f\u884c\u7d50\u679c\u3092\u8a00\u8449\u3067\u8a18\u9332\u3067\u304d\u308b"
+    ]
+  },
+  "learning": {
+    "primary_concepts": [
+      {
+        "id": "state-transition",
+        "label": "\u72b6\u614b\u9077\u79fb",
+        "description": "intro\uff0cplaying\uff0cclear\uff0cgame_over\u306e\u72b6\u614b\u3068\u9077\u79fb\u6761\u4ef6\u3092\u8ffd\u8de1\u3059\u308b\uff0e"
+      },
+      {
+        "id": "boundary-condition",
+        "label": "\u5883\u754c\u6761\u4ef6",
+        "description": "HP\u304c0\u306b\u306a\u308b\u5883\u754c\u3067\u6b21\u306e\u72b6\u614b\u3078\u9032\u3080\u304b\u3092\u78ba\u304b\u3081\u308b\uff0e"
+      }
+    ],
+    "transfer_family": "click-progress",
+    "learning_goals": [
+      "\u753b\u9762\u306e\u75c7\u72b6\u304b\u3089\u95a2\u9023\u3059\u308b\u5909\u6570\u3068\u30a4\u30d9\u30f3\u30c8\u3092\u7279\u5b9a\u3059\u308b\uff0e",
+      "\u6b63\u5e38\u5024\u3068\u5883\u754c\u5024\u3092\u5206\u3051\u3066\u30c6\u30b9\u30c8\u3059\u308b\uff0e"
+    ]
+  },
+  "gameplay": {
+    "genre": "clicker",
+    "expected_duration_minutes": 3,
+    "states": ["intro", "playing", "clear", "game_over"],
+    "input_actions": ["\u30b9\u30e9\u30a4\u30e0\u3092\u30af\u30ea\u30c3\u30af\u3059\u308b"],
+    "clear_condition": "defeated_count\u304ctotal_slimes\u4ee5\u4e0a\u306b\u306a\u308b\uff0e",
+    "failure_condition": "\u3044\u305a\u308c\u304b\u306e\u30b9\u30e9\u30a4\u30e0\u3067time_left\u304c0\u4ee5\u4e0b\u306b\u306a\u308b\uff0e",
+    "settings": [
+      {"name": "total_slimes", "default": 3, "unit": "\u4f53", "meaning": "\u30af\u30ea\u30a2\u306b\u5fc5\u8981\u306a\u8a0e\u4f10\u6570"},
+      {"name": "base_hp", "default": 5, "unit": "HP", "meaning": "1\u4f53\u76ee\u306e\u6700\u5927HP"},
+      {"name": "hp_increase_per_slime", "default": 1, "unit": "HP", "meaning": "\u8a0e\u4f10\u3054\u3068\u306eHP\u5897\u52a0\u91cf"},
+      {"name": "time_per_slime", "default": 10, "unit": "\u79d2", "meaning": "1\u4f53\u3054\u3068\u306e\u5236\u9650\u6642\u9593"}
+    ]
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "status": "needs_qa",
+      "source_path": "games/sword-clicker"
+    },
+    "defect_manifests": [
+      "catalog/defects/00_00-D01.json"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_00-C01",
+      "kind": "normal",
+      "scenario": "\u521d\u671fHP\u304c5\u306e1\u4f53\u76ee\u30925\u56de\u30af\u30ea\u30c3\u30af\u3059\u308b\uff0e",
+      "expected": "\u8a0e\u4f10\u6570\u304c1\u306b\u306a\u308a\uff0cHP6\u306e2\u4f53\u76ee\u304c\u51fa\u73fe\u3059\u308b\uff0e"
+    },
+    {
+      "test_id": "00_00-C02",
+      "kind": "state-transition",
+      "scenario": "3\u4f53\u3092\u305d\u308c\u305e\u308c\u5236\u9650\u6642\u9593\u5185\u306b\u5012\u3059\uff0e",
+      "expected": "game_state\u304cclear\u306b\u306a\u308a\uff0c\u30af\u30ea\u30a2\u8868\u793a\u304c\u51fa\u308b\uff0e"
+    },
+    {
+      "test_id": "00_00-C03",
+      "kind": "boundary",
+      "scenario": "HP\u304c1\u306e\u3068\u304d\u306b1\u56de\u30af\u30ea\u30c3\u30af\u3059\u308b\uff0e",
+      "expected": "HP\u304c0\u306b\u306a\u3063\u305f\u540c\u3058\u30a4\u30d9\u30f3\u30c8\u5185\u3067\u8a0e\u4f10\u304c\u78ba\u5b9a\u3059\u308b\uff0e"
+    }
+  ]
+}
