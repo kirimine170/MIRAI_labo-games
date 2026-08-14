@@ -1,0 +1,11 @@
+<svg version="1.1" width="220" height="190" viewBox="0 0 220 190" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="110" cy="174" rx="78" ry="11" fill="#713f12" opacity="0.22"/>
+  <path d="M24 85h172c-7 57-34 82-86 82S31 142 24 85z" fill="#6d28d9" stroke="#4c1d95" stroke-width="7"/>
+  <ellipse cx="110" cy="85" rx="86" ry="31" fill="#f59e0b" stroke="#4c1d95" stroke-width="7"/>
+  <path d="M52 86c22-13 39 9 60-2s41-9 58 2" fill="none" stroke="#fff7ed" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="71" cy="79" r="5" fill="#ffffff" opacity="0.85"/><circle cx="94" cy="94" r="4" fill="#ffffff" opacity="0.85"/><circle cx="145" cy="76" r="5" fill="#ffffff" opacity="0.85"/><circle cx="162" cy="92" r="3" fill="#ffffff" opacity="0.85"/>
+  <path d="M158 18L126 94" stroke="#92400e" stroke-width="11" stroke-linecap="round"/>
+  <path d="M124 91c-10 12-8 31 6 38" fill="none" stroke="#6b7280" stroke-width="7" stroke-linecap="round"/>
+  <path d="M120 91c-17 8-18 24-6 37M128 94c4 11 1 24-8 33" fill="none" stroke="#f3f4f6" stroke-width="4" stroke-linecap="round"/>
+  <path d="M35 41l4 9 9 4-9 4-4 9-4-9-9-4 9-4zM188 46l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+</svg>

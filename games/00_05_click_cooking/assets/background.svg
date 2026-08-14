@@ -1,0 +1,18 @@
+<svg version="1.1" width="480" height="360" viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="360" fill="#fff7ed"/>
+  <rect y="208" width="480" height="152" fill="#f2c58f"/>
+  <rect y="220" width="480" height="12" fill="#b7794b" opacity="0.55"/>
+  <path d="M0 80h480M0 160h480M80 0v208M160 0v208M240 0v208M320 0v208M400 0v208" stroke="#fed7aa" stroke-width="3" opacity="0.7"/>
+  <rect x="18" y="8" width="254" height="48" rx="16" fill="#ffffff" stroke="#7c3aed" stroke-width="4"/>
+  <rect x="292" y="8" width="170" height="48" rx="16" fill="#ffffff" stroke="#ea580c" stroke-width="4"/>
+  <text x="34" y="40" font-family="sans-serif" font-size="22" font-weight="700" fill="#4c1d95">まぜた</text>
+  <text x="172" y="40" font-family="sans-serif" font-size="21" font-weight="700" fill="#4c1d95">/ 30かい</text>
+  <text x="306" y="40" font-family="sans-serif" font-size="21" font-weight="700" fill="#9a3412">のこり</text>
+  <text x="424" y="40" font-family="sans-serif" font-size="19" font-weight="700" fill="#9a3412">びょう</text>
+  <rect x="24" y="264" width="96" height="55" rx="10" fill="#fdba74" stroke="#c2410c" stroke-width="4"/>
+  <path d="M45 264v-23h54v23M38 288h68" fill="none" stroke="#9a3412" stroke-width="7" stroke-linecap="round"/>
+  <rect x="370" y="246" width="75" height="72" rx="10" fill="#bfdbfe" stroke="#2563eb" stroke-width="4"/>
+  <path d="M390 246v-24h34v24M407 222v-18" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="407" cy="283" r="17" fill="#fef3c7" stroke="#f59e0b" stroke-width="4"/>
+  <circle cx="407" cy="283" r="7" fill="#fbbf24"/>
+</svg>

@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "defect_id": "00_05-D01",
+  "game_id": "00_05",
+  "title": "時間切れ後も混ぜられてクリアになる",
+  "lifecycle": "implemented",
+  "target_learners": {
+    "grades": ["小4", "小5", "小6"],
+    "support": "facilitated",
+    "estimated_minutes": 35
+  },
+  "learning": {
+    "primary_concept": {"id": "state-management", "label": "状態管理"},
+    "secondary_concepts": [
+      {"id": "missing-condition", "label": "条件不足"},
+      {"id": "feedback-consistency", "label": "結果表示の一貫性"}
+    ],
+    "objective": "時間切れ表示と内部のgame_stateの不一致を再現し，終端状態を保存して以後の入力と時間処理を止める必要性を説明する．"
+  },
+  "versions": {
+    "complete": {
+      "version": "1.0.0",
+      "source_path": "games/00_05_click_cooking",
+      "behavior": "時間切れ時にgame_stateをgame_overへ変更し，以後のクリックを進捗へ反映しない．"
+    },
+    "defective": {
+      "version_label": "defect-terminal-state-not-saved",
+      "delivery": "patch",
+      "base_version": "1.0.0",
+      "patch_targets": ["games/00_05_click_cooking/stage.gs"]
+    }
+  },
+  "fault": {
+    "category": "state-management",
+    "symptom": "時間切れ表示の後もボウルをクリックでき，残り1回を混ぜるとクリア表示へ変わる．",
+    "expected_behavior": "時間切れになった時点で失敗が確定し，緑の旗で再開するまで進捗と結果が変わらない．",
+    "root_cause": "finish_game_overでgame_stateをgame_overへ変更する処理が欠落し，画面は失敗表示でも内部状態がplayingのまま残る．",
+    "trigger": "mix_doneを29にして時間切れを待ち，失敗表示後にボウルを1回クリックする．"
+  },
+  "reproduction": {
+    "preconditions": [
+      "mix_targetは30，mix_per_clickは1，time_limitは20の初期設定にする．",
+      "games/00_05_click_cooking/defects/00_05-D01.patchを完成版へ適用する．"
+    ],
+    "steps": [
+      {"step": 1, "action": "ゲーム開始後，20秒以内にボウルを29回クリックして待つ．", "expected_observation": "回数表示は29で，まだplayingである．"},
+      {"step": 2, "action": "残り時間が0になるまで操作せずに待つ．", "expected_observation": "じかんぎれの表示が出るが，内部のgame_stateはplayingのままである．"},
+      {"step": 3, "action": "失敗表示の下側に見えているボウルを1回クリックする．", "expected_observation": "mix_doneが30となり，失敗表示がクリア表示へ変わる．"}
+    ]
+  },
+  "repair": {
+    "minimal_fix": {
+      "description": "finish_game_overの最初でgame_stateをgame_overへ設定し，終端状態を保存する．",
+      "edit_targets": [
+        {"path": "games/00_05_click_cooking/stage.gs", "anchor": "game_state = game_over"}
+      ],
+      "constraints": [
+        "時間切れ表示より先にgame_stateを更新する．",
+        "playing以外ではmix_clickedを進捗へ反映しない．",
+        "緑の旗によるintroへの初期化は維持する．"
+      ]
+    },
+    "acceptable_alternatives": [
+      {
+        "description": "game_activeのような専用フラグを時間切れ時に0へ設定し，入力処理とタイマー処理の両方を同じフラグで停止する．",
+        "acceptance_criteria": [
+          "時間切れ後のクリックでmix_doneが変わらない．",
+          "失敗表示がクリア表示へ変わらない．",
+          "緑の旗で全状態が初期化され，再挑戦できる．"
+        ]
+      }
+    ],
+    "rejected_shortcuts": [
+      "mix_targetを29へ変えて時間切れ前に必ず終わらせる．",
+      "失敗後にボウルを隠すだけで，playingの状態を残す．",
+      "クリア表示を削除して結果の変化を見えなくする．"
+    ]
+  },
+  "tests": [
+    {
+      "test_id": "00_05-D01-T01",
+      "kind": "symptom",
+      "setup": "mix_doneを29にして時間切れまで待つ．",
+      "actions": ["じかんぎれ表示後にボウルを1回クリックする．"],
+      "expected_complete": "game_stateはgame_over，mix_doneは29のままで，じかんぎれ表示が維持される．",
+      "expected_defective": "mix_doneが30，game_stateがclearとなり，できあがり表示へ変わる．",
+      "automatable": false
+    },
+    {
+      "test_id": "00_05-D01-T02",
+      "kind": "regression",
+      "setup": "ゲーム開始直後でtime_leftが20，mix_doneが0の状態にする．",
+      "actions": ["時間内にボウルを8回クリックする．"],
+      "expected_complete": "mix_doneは8，mix_percentは26となり，25％段階の見た目になる．",
+      "expected_defective": "mix_doneは8，mix_percentは26となり，25％段階の見た目になる．",
+      "automatable": false
+    },
+    {
+      "test_id": "00_05-D01-T03",
+      "kind": "boundary",
+      "setup": "時間内にmix_doneを29にする．",
+      "actions": ["time_leftが1以上の間にボウルをもう1回クリックする．"],
+      "expected_complete": "mix_doneは30，game_stateはclearとなり，できあがり表示が出る．",
+      "expected_defective": "mix_doneは30，game_stateはclearとなり，できあがり表示が出る．",
+      "automatable": false
+    }
+  ],
+  "hints": [
+    {"level": 1, "focus": "observation", "prompt": "じかんぎれの表示が出た後，ボウルの下側をクリックすると，何が変わりますか．"},
+    {"level": 2, "focus": "reproduction", "prompt": "29回で止めて時間切れを待ち，その後の1回だけをよく観察しましょう．"},
+    {"level": 3, "focus": "variable", "prompt": "画面がじかんぎれになった時，game_stateはどの値になっているはずですか．"},
+    {"level": 4, "focus": "control-flow", "prompt": "finish_game_overは，表示を変える前にgame_stateを終端状態へ変えていますか．"}
+  ]
+}

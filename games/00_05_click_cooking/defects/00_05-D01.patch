@@ -1,0 +1,7 @@
+diff --git a/games/00_05_click_cooking/stage.gs b/games/00_05_click_cooking/stage.gs
+--- a/games/00_05_click_cooking/stage.gs
++++ b/games/00_05_click_cooking/stage.gs
+@@ -65,3 +65,2 @@
+ proc finish_game_over {
+-    game_state = "game_over";
+     hide_game_ui;
