@@ -25,11 +25,23 @@ Scratchのゲームを題材に，不具合の観察，原因仮説，修正，�
 ./scripts/check-repository.sh
 ./scripts/bootstrap-goboscript.sh
 ./scripts/build-projects.sh
+./scripts/test-scratch-projects.sh
 ```
 
 `bootstrap-goboscript.sh`は，`tools/goboscript-version.env`に固定したnightly Rustとgoboscriptの特定コミットを`.tools/`へ導入します．`build-projects.sh`は`tools/projects.txt`に登録された全プロジェクトをコンパイルし，`build/`へ`.sb3`を出力した後，ZIPコンテナの整合性を確認します．`.tools/`，`build/`，`.sb3`はGitの管理対象外です．
 
 出力した`.sb3`はScratchエディタまたはTurboWarpで開き，必ず手動で開始，成功，失敗，再試行まで確認してください．CIのコンパイル成功は，ゲームプレイや教材品質の保証ではありません．
+
+### Scratch Validation Harness
+
+`test-scratch-projects.sh`は，全8 projectをビルドし，SB3静的検証，Sword／Robot／Nature／Sportsの完成版と欠陥版のheadless機能テスト，JSON／JUnit report生成までを1コマンドで実行します．Node.js `24.6.0`と`@scratch/scratch-vm` `15.0.1`を固定しています．
+
+```bash
+./scripts/test-scratch-projects.sh
+./scripts/preview-project.sh games/sword-clicker
+```
+
+TurboWarpは対話プレビュー専用です．自動テストの成功やTurboWarpでの成功だけでは，公式Scratchとの互換性確認は完了しません．検証レイヤー，依存ライセンス，既知の制限は[Scratch Validation Harness](docs/testing/scratch-validation.md)，公式Scratchで残る確認は[手動スモークテスト](docs/testing/scratch-official-smoke.md)を参照してください．
 
 ### 学習者用の欠陥版を生成する
 

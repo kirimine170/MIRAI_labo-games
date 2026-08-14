@@ -15,7 +15,7 @@ concurrency:
 jobs:
   structure:
     name: Repository structure
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Check out repository
@@ -44,23 +44,61 @@ jobs:
           fi
 
   build:
-    name: Compile Scratch projects
+    name: Build and validate Scratch projects
     needs: structure
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+      - name: Use pinned Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24.6.0
+          cache: npm
+          cache-dependency-path: tools/scratch-validation/package-lock.json
+      - name: Install pinned Scratch validation runtime
+        run: npm ci --prefix tools/scratch-validation --ignore-scripts
       - name: Install pinned goboscript toolchain
         run: ./scripts/bootstrap-goboscript.sh
-      - name: Build and inspect all projects
+      - name: Build all projects once
         run: ./scripts/build-projects.sh "$RUNNER_TEMP/sb3"
       - name: Build learner-safe defect projects
         run: |
+          ./scripts/build-student-defect.sh games/sword-clicker games/sword-clicker/defects/00_00-D01-hp-zero-stall.patch "$RUNNER_TEMP/defects/sword-clicker.sb3"
+          ./scripts/build-student-defect.sh games/robot-repair-clicker games/robot-repair-clicker/defects/00_01-D01-stale-robot-costume.patch "$RUNNER_TEMP/defects/robot-repair-clicker.sb3"
           ./scripts/build-student-defect.sh games/00_05_click_cooking games/00_05_click_cooking/defects/00_05-D01.patch "$RUNNER_TEMP/student/00_05-D01.sb3"
-          ./scripts/build-student-defect.sh games/00_06_click_nature games/00_06_click_nature/defects/D01/remove-fish-progress-update.patch "$RUNNER_TEMP/student/00_06-D01.sb3"
-          ./scripts/build-student-defect.sh games/00_07_click_sports games/00_07_click_sports/defects/00_07-D01-stale-runner.patch "$RUNNER_TEMP/student/00_07-D01.sb3"
+          ./scripts/build-student-defect.sh games/00_06_click_nature games/00_06_click_nature/defects/D01/remove-fish-progress-update.patch "$RUNNER_TEMP/defects/00_06_click_nature.sb3"
+          ./scripts/build-student-defect.sh games/00_07_click_sports games/00_07_click_sports/defects/00_07-D01-stale-runner.patch "$RUNNER_TEMP/defects/00_07_click_sports.sb3"
           ./scripts/build-student-defect.sh games/00_08_click_security games/00_08_click_security/defects/00_08-D01-stale-virus.patch "$RUNNER_TEMP/student/00_08-D01.sb3"
           ./scripts/build-student-defect.sh games/00_09_click_music games/00_09_click_music/defects/00_09-D01.patch "$RUNNER_TEMP/student/00_09-D01.sb3"
+      - name: Validate all SB3 archives statically
+        env:
+          SCRATCH_VALIDATION_REPORT_DIR: ${{ runner.temp }}/reports
+        run: ./scripts/validate-sb3.sh "$RUNNER_TEMP/sb3"
+      - name: Run headless Scratch behavior tests
+        run: |
+          node tools/scratch-validation/src/runner.js \
+            --complete-dir "$RUNNER_TEMP/sb3" \
+            --defect-dir "$RUNNER_TEMP/defects" \
+            --report-dir "$RUNNER_TEMP/reports"
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: scratch-validation-reports-${{ github.sha }}
+          path: ${{ runner.temp }}/reports/
+          if-no-files-found: warn
+          retention-days: 3
+      - name: Upload temporary SB3 previews
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: scratch-projects-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/sb3/*.sb3
+            ${{ runner.temp }}/defects/*.sb3
+          if-no-files-found: error
+          retention-days: 2
